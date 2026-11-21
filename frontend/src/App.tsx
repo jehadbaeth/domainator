@@ -9,7 +9,8 @@ import {
   type RegistrarProfile,
   type TldRow,
 } from './api'
-import { BudgetBadge, FeatureChip, RegistrarsTab } from './Registrars'
+import { BudgetBadge, FEATURES, FeatureChip, RegistrarsTab } from './Registrars'
+import { freeAddons, LOWEST, SettingsPanel, summary, type PriceSettings } from './Settings'
 
 const HORIZONS = [1, 3, 5, 10]
 const KIND_LABEL = { EXACT: 'exact', OTHER_TLD: 'other TLD', VARIATION: 'variation', DOMAIN_HACK: 'domain hack' }
@@ -55,7 +56,10 @@ export default function App() {
   const [query, setQuery] = useState('')
   const [providers, setProviders] = useState<ProviderInfo[]>([])
   const [inactive, setInactive] = useState<ProviderInfo[]>([])
-  const [selected, setSelected] = useState<string[]>(() => load('selectedProviders', []))
+  // registrars the user switched off; anything not listed (including newly added ones) is compared
+  const [excluded, setExcluded] = useState<string[]>(() => load('excludedProviders', []))
+  const [settings, setSettings] = useState<PriceSettings>(() => ({ ...LOWEST, ...load('priceSettings', {}) }))
+  const [showSettings, setShowSettings] = useState(false)
   const [currencies, setCurrencies] = useState<string[]>(['EUR', 'USD'])
   const [currency, setCurrency] = useState<string>(() => load('currency', 'EUR'))
   const [horizon, setHorizon] = useState<number>(() => load('horizon', 10))
@@ -64,7 +68,6 @@ export default function App() {
   const [results, setResults] = useState<DomainResult[] | null>(null)
   const [tldRows, setTldRows] = useState<TldRow[] | null>(null)
   const [resultCurrency, setResultCurrency] = useState(currency)
-  const [withPrivacy, setWithPrivacy] = useState<boolean>(() => load('withPrivacy', true))
   const [registrarData, setRegistrarData] = useState<RegistrarData | null>(null)
   const [comRow, setComRow] = useState<TldRow | null>(null)
   const [loading, setLoading] = useState(false)
@@ -88,19 +91,18 @@ export default function App() {
     return () => window.clearTimeout(timer)
   }, [])
 
-  useEffect(() => save('selectedProviders', selected), [selected])
+  useEffect(() => save('excludedProviders', excluded), [excluded])
+  useEffect(() => save('priceSettings', settings), [settings])
   useEffect(() => save('currency', currency), [currency])
   useEffect(() => save('horizon', horizon), [horizon])
-  useEffect(() => save('withPrivacy', withPrivacy), [withPrivacy])
   const profiles = useMemo(() => {
     const m = new Map<string, RegistrarProfile>()
     registrarData?.registrars.forEach((r) => r.providerId && m.set(r.providerId, r))
     return m
   }, [registrarData])
 
-  // empty selection means "all"
-  const activeIds = selected.filter((id) => providers.some((p) => p.id === id))
-  const providerIds = activeIds.length ? activeIds : providers.map((p) => p.id)
+  const providerIds = providers.map((p) => p.id).filter((id) => !excluded.includes(id))
+  const vat = settings.vatOn ? settings.vatRate : 0
   const shownProviders = providers.filter((p) => providerIds.includes(p.id))
   const years = useMemo(() => [...new Set([1, 5, 10, horizon])].sort((a, b) => a - b), [horizon])
 
@@ -110,7 +112,8 @@ export default function App() {
     setLoading(true)
     setError(null)
     try {
-      const res = await api.search(query, providerIds, currency, years, withPrivacy)
+      if (!providerIds.length) throw new Error('No registrar selected. Open Settings to choose some.')
+      const res = await api.search(query, providerIds, currency, years, settings.addons, vat)
       setResults(res.results)
       setResultCurrency(res.currency)
     } catch (err) {
@@ -124,7 +127,8 @@ export default function App() {
     setLoading(true)
     setError(null)
     try {
-      const res = await api.tlds(providerIds, currency, years, 2000, withPrivacy)
+      if (!providerIds.length) throw new Error('No registrar selected. Open Settings to choose some.')
+      const res = await api.tlds(providerIds, currency, years, 2000, settings.addons, vat)
       setTldRows(res.tlds.slice(0, 300))
       setComRow(res.tlds.find((r) => r.tld === 'com') ?? null)
       setResultCurrency(res.currency)
@@ -140,13 +144,8 @@ export default function App() {
     if (tab === 'search' && results) runSearch()
     if (tab === 'tlds' || tab === 'registrars') loadTlds()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tab, currency, horizon, withPrivacy, selected.join(','), providers.filter((p) => p.status === 'READY').length])
+  }, [tab, currency, horizon, vat, settings.addons.join(','), excluded.join(','), providers.filter((p) => p.status === 'READY').length])
 
-  function toggleProvider(id: string) {
-    const current = activeIds.length ? activeIds : providers.map((p) => p.id)
-    const next = current.includes(id) ? current.filter((x) => x !== id) : [...current, id]
-    setSelected(next.length ? next : [id])
-  }
 
   const visible = useMemo(() => {
     if (!results) return []
@@ -207,10 +206,6 @@ export default function App() {
             ))}
           </div>
         </div>
-        <label className="control inline" title="Adds the yearly cost of paid WHOIS privacy to each registrar's price, and keeps registrars without real privacy out of 'best'">
-          <input type="checkbox" checked={withPrivacy} onChange={(e) => setWithPrivacy(e.target.checked)} />
-          Include WHOIS privacy cost
-        </label>
         <label className="control">
           <span className="label">Currency</span>
           <select value={currency} onChange={(e) => setCurrency(e.target.value)}>
@@ -219,19 +214,6 @@ export default function App() {
             ))}
           </select>
         </label>
-        <div className="control">
-          <span className="label">Registrars</span>
-          <div className="chips">
-            {providers.map((p) => (
-              <label key={p.id} className={`chip ${providerIds.includes(p.id) ? 'on' : ''}`} title={p.error ?? ''}>
-                <input type="checkbox" checked={providerIds.includes(p.id)} onChange={() => toggleProvider(p.id)} />
-                {p.name}
-                {p.kind !== 'price list' && <span className="live-mark" title={p.kind}>live</span>}
-                <span className={`dot ${p.status.toLowerCase()}`} />
-              </label>
-            ))}
-          </div>
-        </div>
         {tab === 'search' && (
           <>
             <label className="control">
@@ -249,21 +231,20 @@ export default function App() {
         )}
       </section>
 
-      {inactive.length > 0 && (
-        <details className="inactive">
-          <summary>
-            Showing {providers.length} registrars that publish prices without an account. {inactive.length} more
-            need your API keys in <code>.env</code>, click to see which
-          </summary>
-          <ul>
-            {inactive.map((p) => (
-              <li key={p.id}>
-                <strong>{p.name}</strong>: {p.error}
-                {p.note && <span className="sub"> ({p.note})</span>}
-              </li>
-            ))}
-          </ul>
-        </details>
+      <div className="settings-bar">
+        <span>{summary(settings, providerIds.length, providers.length)}</span>
+        <button onClick={() => setShowSettings((v) => !v)}>{showSettings ? 'Close settings' : 'Settings'}</button>
+      </div>
+      {showSettings && (
+        <SettingsPanel
+          providers={providers}
+          inactive={inactive}
+          profiles={profiles}
+          selected={providerIds}
+          onSelected={(ids) => setExcluded(providers.map((p) => p.id).filter((id) => !ids.includes(id)))}
+          settings={settings}
+          onSettings={setSettings}
+        />
       )}
 
       {loadingProviders.length > 0 && (
@@ -286,7 +267,7 @@ export default function App() {
           }))}
           providers={shownProviders}
           profiles={profiles}
-          withPrivacy={withPrivacy}
+          settings={settings}
           horizon={horizon}
           currency={resultCurrency}
           empty={results.length ? 'Everything we checked is taken. Tick "Show taken" to see them.' : 'No candidates.'}
@@ -306,7 +287,7 @@ export default function App() {
           }))}
           providers={shownProviders}
           profiles={profiles}
-          withPrivacy={withPrivacy}
+          settings={settings}
           horizon={horizon}
           currency={resultCurrency}
           empty="No prices loaded yet."
@@ -359,12 +340,17 @@ function PriceTable(props: {
   rows: Row[]
   providers: ProviderInfo[]
   profiles: Map<string, RegistrarProfile>
-  withPrivacy: boolean
+  settings: PriceSettings
   horizon: number
   currency: string
   empty: string
 }) {
-  const { rows, providers, profiles, withPrivacy, horizon, currency, empty } = props
+  const { rows, providers, profiles, settings, horizon, currency, empty } = props
+  const vatNote = (p: ProviderInfo) => {
+    if (!settings.vatOn) return p.taxNote
+    const euVat = profiles.get(p.id)?.euVat
+    return euVat === true ? `incl. ${settings.vatRate}% VAT` : euVat === false ? 'no VAT charged' : 'VAT unknown, not added'
+  }
   if (!rows.length) return <p className="notice">{empty}</p>
   return (
     <div className="table-wrap">
@@ -376,13 +362,14 @@ function PriceTable(props: {
             {providers.map((p) => (
               <th key={p.id}>
                 {p.name}
-                <small>{p.taxNote}</small>
+                <small>{vatNote(p)}</small>
                 {profiles.get(p.id) && (
                   <div className="th-feats">
                     <BudgetBadge budget={profiles.get(p.id)!.budget} />
-                    <FeatureChip feature={profiles.get(p.id)!.features.privacy} label="privacy" />
-                    <FeatureChip feature={profiles.get(p.id)!.features.ssl} label="SSL" />
-                    <FeatureChip feature={profiles.get(p.id)!.features.emailForwarding} label="email fwd" />
+                    {freeAddons(profiles.get(p.id)).map((f) => (
+                      <FeatureChip key={f.key} feature={profiles.get(p.id)!.features[f.key]} label={f.short} />
+                    ))}
+                    {freeAddons(profiles.get(p.id)).length === 0 && <span className="feat none">no free add-ons</span>}
                   </div>
                 )}
               </th>
@@ -451,14 +438,26 @@ function PriceTable(props: {
                           teaser price
                         </span>
                       )}
-                      {withPrivacy && q.privacyAdded != null && (
-                        <span className="badge warn" title="Paid WHOIS privacy added to every year">
-                          incl. {money(q.privacyAdded, q.currency)} privacy
-                        </span>
-                      )}
-                      {withPrivacy && (q.privacy === 'none' || q.privacy === 'limited') && (
-                        <span className="badge warn" title="No real WHOIS privacy here, so it can't win 'best' with privacy on">
-                          {q.privacy === 'none' ? 'no privacy' : 'redaction only'}
+                      {q.addons
+                        .filter((a) => a.status !== 'free')
+                        .map((a) => {
+                          const label = FEATURES.find((f) => f.key === a.feature)?.short ?? a.feature
+                          if (a.status === 'paid')
+                            return (
+                              <span key={a.feature} className="badge warn" title={`${label} is paid here and included in the price`}>
+                                +{money(a.amount ?? 0, q.currency)}
+                                {a.note === 'once' ? ' once' : '/yr'} {label}
+                              </span>
+                            )
+                          return (
+                            <span key={a.feature} className={`badge ${a.status === 'missing' ? 'bait' : ''}`} title={a.note ?? ''}>
+                              {a.status === 'missing' ? `no ${label}` : `${label} ${a.status}`}
+                            </span>
+                          )
+                        })}
+                      {settings.vatOn && q.vat === 'unknown' && (
+                        <span className="badge" title="Unknown whether this registrar charges VAT, so none was added">
+                          VAT?
                         </span>
                       )}
                       {q.premium && (

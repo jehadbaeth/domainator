@@ -54,10 +54,12 @@ public final class SearchModels {
             boolean premium,
             /* true if the price came from a live per-domain check rather than the TLD price list */
             boolean live,
-            /* WHOIS privacy at this registrar: free, paid, limited (redaction only), none, unknown */
-            String privacy,
-            /* yearly privacy cost added to registration and renewal (display currency), or null */
-            BigDecimal privacyAdded,
+            /* the add-ons the user asked for, and how each is covered here */
+            List<AddonLine> addons,
+            /* true if a requested add-on is not available (or has no known price): cannot win "best" */
+            boolean addonsMissing,
+            /* "added" (VAT included in these prices), "net" (VAT not added), "not charged", "unknown" */
+            String vat,
             String promo,
             String taxNote,
             String originalCurrency,
@@ -70,6 +72,13 @@ public final class SearchModels {
      * @param status  LOADING, READY, ERROR, or INACTIVE (not configured / disabled; {@code error} says why)
      * @param kind    "price list", "live quotes" or "price list + live quotes"
      */
+    /**
+     * @param status free, paid, limited, missing or unknown
+     * @param amount added cost in the quote's currency (per year, or once), or null
+     */
+    public record AddonLine(String feature, String status, BigDecimal amount, String note) {
+    }
+
     public record ProviderInfo(
             String id,
             String name,

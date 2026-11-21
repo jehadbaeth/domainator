@@ -64,8 +64,20 @@ to the official page it comes from, plus a budget verdict and the usual catches.
 tab shows it with filters ("must include free privacy and SSL"), and price table headers show the key ones.
 Entries marked *snippet* could only be read from search excerpts because the site blocks automated checks.
 
-"Include WHOIS privacy cost" adds paid privacy (INWX, EuroDNS, 101domain, united-domains, NearlyFreeSpeech)
-to every year, and keeps registrars with no privacy or redaction only out of "best".
+### Settings (saved in your browser)
+
+The defaults give the lowest prices: every public registrar, net prices, no add-ons.
+
+* **Registrars to compare:** tick any combination, or use All, None, "Great & good budget" or "Free privacy".
+  Only ticked registrars are compared and shown as columns.
+* **VAT:** off shows net prices. On adds your rate (default 19%) for registrars that charge EU VAT;
+  for registrars where that is unknown (mostly US ones) nothing is added and the cell says "VAT?".
+* **Add-ons I need:** privacy, SSL, email forwarding, mailbox, DNS, DNSSEC, URL forwarding, 2FA. Free ones
+  cost nothing; paid ones are added to every year (monthly prices x12, one-time fees in year one, a bundle
+  such as united-domains' Domain Tresor counted once). A registrar that does not offer one, offers only GDPR
+  redaction instead of privacy, or has no known price for it is marked and cannot be "Best".
+
+Paid add-on prices and VAT behaviour live in `registrars.json` next to the feature data.
 
 ### Other data sources
 

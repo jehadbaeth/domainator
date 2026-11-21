@@ -1,6 +1,6 @@
 {
  "asOf": "2026-11-21",
- "note": "Researched from official registrar pages. \"snippet\" means only a search engine excerpt of an official page could be read; check those in a browser.",
+ "note": "Researched from official registrar pages. \"snippet\" means only a search engine excerpt of an official page could be read; check those in a browser. euVat: whether the registrar adds VAT for EU consumers on top of its net price (missing = unknown). Feature cost \"per\": year, month or once; a \"bundle\" is paid once even if it covers several features.",
  "registrars": [
   {
    "id": "porkbun",
@@ -28,7 +28,12 @@
     "mailbox": {
      "value": "paid",
      "note": "15 day trial, then from $3/month",
-     "source": "https://porkbun.com/products/domains"
+     "source": "https://porkbun.com/products/domains",
+     "cost": {
+      "amount": 3,
+      "currency": "USD",
+      "per": "month"
+     }
     },
     "dns": {
      "value": "free",
@@ -503,7 +508,8 @@
    "sources": [
     "https://vercel.com/docs/domains/supported-domains"
    ],
-   "website": "https://vercel.com/domains"
+   "website": "https://vercel.com/domains",
+   "euVat": true
   },
   {
    "id": "route53",
@@ -531,11 +537,21 @@
     "dns": {
      "value": "paid",
      "note": "hosted zone $0.50/month plus queries, created automatically",
-     "source": "https://aws.amazon.com/route53/pricing/"
+     "source": "https://aws.amazon.com/route53/pricing/",
+     "cost": {
+      "amount": 0.5,
+      "currency": "USD",
+      "per": "month"
+     }
     },
     "dnssec": {
      "value": "paid",
-     "note": "KMS key charges apply"
+     "note": "needs an AWS KMS key, about $1/month",
+     "cost": {
+      "amount": 1.0,
+      "currency": "USD",
+      "per": "month"
+     }
     },
     "urlForwarding": {
      "value": "none"
@@ -550,7 +566,8 @@
    "sources": [
     "https://aws.amazon.com/route53/pricing/"
    ],
-   "website": "https://aws.amazon.com/route53/"
+   "website": "https://aws.amazon.com/route53/",
+   "euVat": true
   },
   {
    "id": "nfs",
@@ -563,7 +580,12 @@
     "privacy": {
      "value": "paid",
      "note": "about $3.29/yr, real proxy",
-     "source": "https://www.nearlyfreespeech.net/services/respect"
+     "source": "https://www.nearlyfreespeech.net/services/respect",
+     "cost": {
+      "amount": 3.29,
+      "currency": "USD",
+      "per": "year"
+     }
     },
     "ssl": {
      "value": "limited",
@@ -572,7 +594,12 @@
     "emailForwarding": {
      "value": "paid",
      "note": "about $10.95/yr",
-     "source": "https://www.nearlyfreespeech.net/services/email"
+     "source": "https://www.nearlyfreespeech.net/services/email",
+     "cost": {
+      "amount": 10.95,
+      "currency": "USD",
+      "per": "year"
+     }
     },
     "mailbox": {
      "value": "none"
@@ -580,7 +607,12 @@
     "dns": {
      "value": "paid",
      "note": "about $0.41 to $1.22/yr",
-     "source": "https://www.nearlyfreespeech.net/services/dns"
+     "source": "https://www.nearlyfreespeech.net/services/dns",
+     "cost": {
+      "amount": 1.22,
+      "currency": "USD",
+      "per": "year"
+     }
     },
     "dnssec": {
      "value": "none"
@@ -598,11 +630,7 @@
    "sources": [
     "https://www.nearlyfreespeech.net/services/domains"
    ],
-   "website": "https://www.nearlyfreespeech.net",
-   "privacyCost": {
-    "amount": 3.29,
-    "currency": "USD"
-   }
+   "website": "https://www.nearlyfreespeech.net"
   },
   {
    "id": "namecheap",
@@ -743,7 +771,8 @@
    "sources": [
     "https://www.hostinger.com/domain-name-search"
    ],
-   "website": "https://www.hostinger.com"
+   "website": "https://www.hostinger.com",
+   "euVat": true
   },
   {
    "id": "squarespace",
@@ -809,11 +838,21 @@
     "emailForwarding": {
      "value": "paid",
      "note": "moving into Titan Pro at $36/yr",
-     "source": "https://support.hover.com/support/solutions/articles/201000132630-titan-email-faq"
+     "source": "https://support.hover.com/support/solutions/articles/201000132630-titan-email-faq",
+     "cost": {
+      "amount": 36,
+      "currency": "USD",
+      "per": "year"
+     }
     },
     "mailbox": {
      "value": "paid",
-     "note": "Titan from $36/yr"
+     "note": "Titan from $36/yr",
+     "cost": {
+      "amount": 36,
+      "currency": "USD",
+      "per": "year"
+     }
     },
     "dns": {
      "value": "free"
@@ -882,7 +921,8 @@
    "sources": [
     "https://www.godaddy.com/resources/skills/how-much-domain-name-cost"
    ],
-   "website": "https://www.godaddy.com"
+   "website": "https://www.godaddy.com",
+   "euVat": true
   },
   {
    "id": "ovh",
@@ -931,7 +971,8 @@
    "sources": [
     "https://www.ovhcloud.com/en-ie/domains/"
    ],
-   "website": "https://www.ovhcloud.com"
+   "website": "https://www.ovhcloud.com",
+   "euVat": true
   },
   {
    "id": "infomaniak",
@@ -944,7 +985,12 @@
     "privacy": {
      "value": "paid",
      "note": "CHF 2.40/yr, real proxy",
-     "source": "https://www.infomaniak.com/en/domains/domain-privacy"
+     "source": "https://www.infomaniak.com/en/domains/domain-privacy",
+     "cost": {
+      "amount": 2.4,
+      "currency": "CHF",
+      "per": "year"
+     }
     },
     "ssl": {
      "value": "limited",
@@ -979,10 +1025,7 @@
     "https://www.infomaniak.com/en/domains/prices/com"
    ],
    "website": "https://www.infomaniak.com",
-   "privacyCost": {
-    "amount": 2.4,
-    "currency": "CHF"
-   }
+   "euVat": true
   },
   {
    "id": "netcup",
@@ -1028,7 +1071,8 @@
    "sources": [
     "https://www.netcup.com/de/domain/zusaetzliche-domain-com"
    ],
-   "website": "https://www.netcup.com"
+   "website": "https://www.netcup.com",
+   "euVat": true
   },
   {
    "id": "inwx",
@@ -1041,7 +1085,12 @@
     "privacy": {
      "value": "paid",
      "note": "EUR 4.19/yr net (4.99 gross), real proxy",
-     "source": "https://www.inwx.de/de/offer/whoisprivacy"
+     "source": "https://www.inwx.de/de/offer/whoisprivacy",
+     "cost": {
+      "amount": 4.19,
+      "currency": "EUR",
+      "per": "year"
+     }
     },
     "ssl": {
      "value": "none",
@@ -1049,7 +1098,12 @@
     },
     "emailForwarding": {
      "value": "paid",
-     "note": "needs Mail Easy, EUR 0.29/month"
+     "note": "needs Mail Easy, EUR 0.29/month",
+     "cost": {
+      "amount": 0.29,
+      "currency": "EUR",
+      "per": "month"
+     }
     },
     "mailbox": {
      "value": "none"
@@ -1078,10 +1132,7 @@
     "https://www.inwx.de/de/domain/pricelist"
    ],
    "website": "https://www.inwx.de",
-   "privacyCost": {
-    "amount": 4.19,
-    "currency": "EUR"
-   }
+   "euVat": true
   },
   {
    "id": "strato",
@@ -1113,7 +1164,12 @@
     "dnssec": {
      "value": "paid",
      "note": "Domain Guard EUR 1.25/month",
-     "source": "https://www.strato.de/domains/domainguard/"
+     "source": "https://www.strato.de/domains/domainguard/",
+     "cost": {
+      "amount": 1.25,
+      "currency": "EUR",
+      "per": "month"
+     }
     },
     "urlForwarding": {
      "value": "free"
@@ -1127,7 +1183,8 @@
    "sources": [
     "https://www.strato.de/domains/com-domain/"
    ],
-   "website": "https://www.strato.de"
+   "website": "https://www.strato.de",
+   "euVat": true
   },
   {
    "id": "ionos",
@@ -1158,7 +1215,12 @@
     "dnssec": {
      "value": "paid",
      "note": "Domain Guard EUR 15/yr",
-     "source": "https://www.ionos.de/domains/domain-guard"
+     "source": "https://www.ionos.de/domains/domain-guard",
+     "cost": {
+      "amount": 15,
+      "currency": "EUR",
+      "per": "year"
+     }
     },
     "urlForwarding": {
      "value": "unknown"
@@ -1172,7 +1234,8 @@
    "sources": [
     "https://www.ionos.de/domains/domain-preistabelle"
    ],
-   "website": "https://www.ionos.de"
+   "website": "https://www.ionos.de",
+   "euVat": true
   },
   {
    "id": "uniteddomains",
@@ -1185,7 +1248,13 @@
     "privacy": {
      "value": "paid",
      "note": "only in \"Domain Tresor\": EUR 15/yr gross, real proxy",
-     "source": "https://www.united-domains.de/domain-tresor/"
+     "source": "https://www.united-domains.de/domain-tresor/",
+     "cost": {
+      "amount": 12.61,
+      "currency": "EUR",
+      "per": "year",
+      "bundle": "tresor"
+     }
     },
     "ssl": {
      "value": "limited",
@@ -1203,7 +1272,13 @@
     },
     "dnssec": {
      "value": "paid",
-     "note": "via Domain Tresor"
+     "note": "via Domain Tresor",
+     "cost": {
+      "amount": 12.61,
+      "currency": "EUR",
+      "per": "year",
+      "bundle": "tresor"
+     }
     },
     "urlForwarding": {
      "value": "free"
@@ -1219,10 +1294,7 @@
     "https://www.united-domains.de/agb/"
    ],
    "website": "https://www.united-domains.de",
-   "privacyCost": {
-    "amount": 12.61,
-    "currency": "EUR"
-   }
+   "euVat": true
   },
   {
    "id": "gandi",
@@ -1269,7 +1341,8 @@
    "sources": [
     "https://www.gandi.net/en-US/domain/tld/com"
    ],
-   "website": "https://www.gandi.net"
+   "website": "https://www.gandi.net",
+   "euVat": true
   },
   {
    "id": "eurodns",
@@ -1282,7 +1355,12 @@
     "privacy": {
      "value": "paid",
      "note": "EUR 5/yr",
-     "source": "https://www.eurodns.com/domain-privacy"
+     "source": "https://www.eurodns.com/domain-privacy",
+     "cost": {
+      "amount": 5.0,
+      "currency": "EUR",
+      "per": "year"
+     }
     },
     "ssl": {
      "value": "free",
@@ -1318,10 +1396,7 @@
     "https://www.eurodns.com/domain-extensions/com-domain-registration"
    ],
    "website": "https://www.eurodns.com",
-   "privacyCost": {
-    "amount": 5.0,
-    "currency": "EUR"
-   }
+   "euVat": true
   },
   {
    "id": "101domain",
@@ -1334,7 +1409,12 @@
     "privacy": {
      "value": "paid",
      "note": "$10.99/yr",
-     "source": "https://www.101domain.com/whois_privacy_protection.htm"
+     "source": "https://www.101domain.com/whois_privacy_protection.htm",
+     "cost": {
+      "amount": 10.99,
+      "currency": "USD",
+      "per": "year"
+     }
     },
     "ssl": {
      "value": "paid"
@@ -1364,11 +1444,7 @@
    "sources": [
     "https://www.101domain.com/com.htm"
    ],
-   "website": "https://www.101domain.com",
-   "privacyCost": {
-    "amount": 10.99,
-    "currency": "USD"
-   }
+   "website": "https://www.101domain.com"
   },
   {
    "id": "openprovider",
@@ -1410,7 +1486,8 @@
    "sources": [
     "https://www.openprovider.com/membership-plans"
    ],
-   "website": "https://www.openprovider.com"
+   "website": "https://www.openprovider.com",
+   "euVat": true
   },
   {
    "id": "regery",
@@ -1552,7 +1629,8 @@
     "https://www.df.eu/de/preislisten/",
     "https://www.df.eu/de/support/df-faq/rechnung-vertrag/kuendigung/"
    ],
-   "website": "https://www.df.eu"
+   "website": "https://www.df.eu",
+   "euVat": true
   },
   {
    "id": "onecom",
@@ -1599,7 +1677,8 @@
    "sources": [
     "https://www.one.com/en-us/domain/com/"
    ],
-   "website": "https://www.one.com"
+   "website": "https://www.one.com",
+   "euVat": true
   },
   {
    "id": "allinkl",
@@ -1648,7 +1727,8 @@
     "https://all-inkl.com/en/domains/prices",
     "https://all-inkl.com/en/terms-and-conditions"
    ],
-   "website": "https://all-inkl.com"
+   "website": "https://all-inkl.com",
+   "euVat": true
   },
   {
    "id": "loopia",
@@ -1661,7 +1741,12 @@
     "privacy": {
      "value": "paid",
      "note": "80 SEK/yr excl. VAT for a real proxy; free redaction by default",
-     "source": "https://www.loopia.com/domainnames/domainprotection/"
+     "source": "https://www.loopia.com/domainnames/domainprotection/",
+     "cost": {
+      "amount": 80,
+      "currency": "SEK",
+      "per": "year"
+     }
     },
     "ssl": {
      "value": "none",
@@ -1670,16 +1755,33 @@
     "emailForwarding": {
      "value": "paid",
      "note": "needs LoopiaDNS (9,99 SEK/month) or a plan",
-     "source": "https://support.loopia.se/wiki/vidarebefordra-e-post-kundzon/"
+     "source": "https://support.loopia.se/wiki/vidarebefordra-e-post-kundzon/",
+     "cost": {
+      "amount": 9.99,
+      "currency": "SEK",
+      "per": "month",
+      "bundle": "loopiadns"
+     }
     },
     "mailbox": {
      "value": "paid",
-     "note": "79 SEK/month"
+     "note": "79 SEK/month",
+     "cost": {
+      "amount": 79,
+      "currency": "SEK",
+      "per": "month"
+     }
     },
     "dns": {
-     "value": "limited",
+     "value": "paid",
      "note": "DNS editor needs paid LoopiaDNS",
-     "source": "https://www.loopia.com/loopiadns/"
+     "source": "https://www.loopia.com/loopiadns/",
+     "cost": {
+      "amount": 9.99,
+      "currency": "SEK",
+      "per": "month",
+      "bundle": "loopiadns"
+     }
     },
     "dnssec": {
      "value": "limited",
@@ -1688,7 +1790,13 @@
     },
     "urlForwarding": {
      "value": "paid",
-     "note": "part of LoopiaDNS"
+     "note": "part of LoopiaDNS",
+     "cost": {
+      "amount": 9.99,
+      "currency": "SEK",
+      "per": "month",
+      "bundle": "loopiadns"
+     }
     },
     "twoFactor": {
      "value": "limited",
@@ -1700,10 +1808,7 @@
     "https://www.loopia.com/domainnames/detailed_prices/"
    ],
    "website": "https://www.loopia.com",
-   "privacyCost": {
-    "amount": 80,
-    "currency": "SEK"
-   }
+   "euVat": true
   },
   {
    "id": "namespro",
@@ -1716,7 +1821,12 @@
     "privacy": {
      "value": "paid",
      "note": "C$8.88 one time per registrant, real proxy",
-     "source": "https://www.namespro.ca/PrivateWHOIS.asp"
+     "source": "https://www.namespro.ca/PrivateWHOIS.asp",
+     "cost": {
+      "amount": 8.88,
+      "currency": "CAD",
+      "per": "once"
+     }
     },
     "ssl": {
      "value": "none",
@@ -1725,7 +1835,12 @@
     "emailForwarding": {
      "value": "paid",
      "note": "only in email plans from C$2.88/month",
-     "source": "https://www.namespro.ca/E-MailHosting.asp"
+     "source": "https://www.namespro.ca/E-MailHosting.asp",
+     "cost": {
+      "amount": 2.88,
+      "currency": "CAD",
+      "per": "month"
+     }
     },
     "mailbox": {
      "value": "free",
@@ -1753,12 +1868,7 @@
    "sources": [
     "https://www.namespro.ca/pricing"
    ],
-   "website": "https://www.namespro.ca",
-   "privacyCost": {
-    "amount": 8.88,
-    "currency": "CAD",
-    "oneTime": true
-   }
+   "website": "https://www.namespro.ca"
   },
   {
    "id": "regru",
@@ -1771,7 +1881,12 @@
     "privacy": {
      "value": "paid",
      "note": "proxy, about 199 RUB (bundle table excerpt)",
-     "source": "https://help.reg.ru/support/domains/administrator-domena/skrytiye-personalnykh-dannykh-administratora-domena"
+     "source": "https://help.reg.ru/support/domains/administrator-domena/skrytiye-personalnykh-dannykh-administratora-domena",
+     "cost": {
+      "amount": 199,
+      "currency": "RUB",
+      "per": "year"
+     }
     },
     "ssl": {
      "value": "unknown"
@@ -1794,7 +1909,12 @@
     },
     "urlForwarding": {
      "value": "paid",
-     "note": "about 120 RUB/yr"
+     "note": "about 120 RUB/yr",
+     "cost": {
+      "amount": 120,
+      "currency": "RUB",
+      "per": "year"
+     }
     },
     "twoFactor": {
      "value": "limited",
@@ -1807,10 +1927,7 @@
     "https://api.reg.ru/api/regru2/domain/get_prices"
    ],
    "website": "https://www.reg.com",
-   "privacyCost": {
-    "amount": 199,
-    "currency": "RUB"
-   }
+   "euVat": false
   }
  ]
 }

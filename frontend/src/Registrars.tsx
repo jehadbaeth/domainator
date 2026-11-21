@@ -158,10 +158,10 @@ export function RegistrarsTab(props: {
                   {FEATURES.map((f) => (
                     <td key={f.key}>
                       <FeatureChip feature={r.features[f.key]} />
-                      {f.key === 'privacy' && r.privacyCost && (
+                      {r.features[f.key]?.cost && (
                         <div className="sub">
-                          {r.privacyCost.amount} {r.privacyCost.currency}
-                          {r.privacyCost.oneTime ? ' once' : '/yr'}
+                          {r.features[f.key].cost!.amount} {r.features[f.key].cost!.currency}
+                          {r.features[f.key].cost!.per === 'once' ? ' once' : `/${r.features[f.key].cost!.per === 'month' ? 'mo' : 'yr'}`}
                         </div>
                       )}
                     </td>

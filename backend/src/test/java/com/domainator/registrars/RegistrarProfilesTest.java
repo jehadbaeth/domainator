@@ -43,14 +43,18 @@ class RegistrarProfilesTest {
                 JsonNode feature = r.path("features").path(f);
                 assertThat(VALUES).as(id + "." + f).contains(feature.path("value").asString());
             }
-            if ("paid".equals(r.path("features").path("privacy").path("value").asString()) && pid != null
-                    && !"openprovider".equals(pid)) {
-                assertThat(profiles.privacyCost(pid)).as("privacy cost of " + id).isPresent();
+            for (String f : FEATURES) {
+                JsonNode cost = r.path("features").path(f).path("cost");
+                if (!cost.isMissingNode()) {
+                    assertThat(Set.of("year", "month", "once")).as(id + "." + f + ".per").contains(cost.path("per").asString());
+                    assertThat(cost.path("amount").decimalValue()).as(id + "." + f + ".amount").isPositive();
+                }
             }
         }
-        assertThat(profiles.privacy("porkbun")).isEqualTo("free");
-        assertThat(profiles.privacy("inwx")).isEqualTo("paid");
-        assertThat(profiles.privacyCost("inwx").orElseThrow().amount()).isEqualByComparingTo("4.19");
-        assertThat(profiles.privacy("nope")).isEqualTo("unknown");
+        assertThat(profiles.feature("porkbun", "privacy").value()).isEqualTo("free");
+        assertThat(profiles.feature("inwx", "privacy").cost().orElseThrow().amount()).isEqualByComparingTo("4.19");
+        assertThat(profiles.feature("nope", "privacy").value()).isEqualTo("unknown");
+        assertThat(profiles.euVat("inwx")).isTrue();
+        assertThat(profiles.euVat("porkbun")).isNull();
     }
 }

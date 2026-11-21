@@ -34,15 +34,16 @@ public class SearchController {
     }
 
     /**
-     * Example: /api/search?q=acme&years=1,5,10&currency=EUR&providers=porkbun,ovh
+     * Example: /api/search?q=acme&years=1,5,10&currency=EUR&providers=porkbun,ovh&addons=privacy,emailForwarding&vat=19
      */
     @GetMapping("/search")
     public SearchResponse search(@RequestParam String q,
                                  @RequestParam(required = false) String providers,
                                  @RequestParam(required = false) String currency,
                                  @RequestParam(defaultValue = "1,5,10") String years,
-                                 @RequestParam(defaultValue = "false") boolean withPrivacy) {
-        return service.search(q, ids(providers), currency, years(years), withPrivacy);
+                                 @RequestParam(required = false) String addons,
+                                 @RequestParam(defaultValue = "0") int vat) {
+        return service.search(q, ids(providers), currency, years(years), new PriceOptions(addons(addons), vat));
     }
 
     /** Every TLD ranked by total cost over the longest horizon. */
@@ -51,8 +52,10 @@ public class SearchController {
                             @RequestParam(required = false) String currency,
                             @RequestParam(defaultValue = "1,5,10") String years,
                             @RequestParam(defaultValue = "100") int limit,
-                            @RequestParam(defaultValue = "false") boolean withPrivacy) {
-        return service.tlds(ids(providers), currency, years(years), Math.min(Math.max(limit, 1), 2000), withPrivacy);
+                            @RequestParam(required = false) String addons,
+                            @RequestParam(defaultValue = "0") int vat) {
+        return service.tlds(ids(providers), currency, years(years), Math.min(Math.max(limit, 1), 2000),
+                new PriceOptions(addons(addons), vat));
     }
 
     @GetMapping("/providers")
@@ -81,6 +84,16 @@ public class SearchController {
             return Set.of();
         }
         return Arrays.stream(csv.split(",")).map(String::trim).filter(s -> !s.isEmpty()).collect(Collectors.toSet());
+    }
+
+    private static Set<String> addons(String csv) {
+        Set<String> out = ids(csv);
+        for (String a : out) {
+            if (!RegistrarProfiles.FEATURES.contains(a)) {
+                throw new IllegalArgumentException("unknown add-on '" + a + "', use " + RegistrarProfiles.FEATURES);
+            }
+        }
+        return out;
     }
 
     private static List<Integer> years(String csv) {

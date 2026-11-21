@@ -3,6 +3,7 @@ package com.domainator.registrars;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -13,14 +14,25 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
 /**
- * What each registrar includes for free (privacy, SSL, email forwarding, ...), researched from official pages and
- * kept in src/main/resources/registrars.json with a source link per claim. Edit that file to correct an entry.
+ * What each registrar includes for free and what its paid add-ons cost (privacy, SSL, email forwarding, ...),
+ * researched from official pages and kept in src/main/resources/registrars.json with a source link per claim.
+ * Edit that file to correct an entry.
  */
 @Component
 public class RegistrarProfiles {
 
-    /** @param oneTime paid once at registration instead of every year (Namespro) */
-    public record PrivacyCost(BigDecimal amount, String currency, boolean oneTime) {
+    public static final List<String> FEATURES = List.of("privacy", "ssl", "emailForwarding", "mailbox", "dns",
+            "dnssec", "urlForwarding", "twoFactor");
+
+    /**
+     * @param per    "year", "month" or "once"
+     * @param bundle features sharing a bundle id are paid once (e.g. one product covering privacy and DNSSEC)
+     */
+    public record Cost(BigDecimal amount, String currency, String per, String bundle) {
+    }
+
+    /** @param value free, paid, limited, none or unknown */
+    public record Feature(String value, Optional<Cost> cost) {
     }
 
     private final JsonNode data;
@@ -42,18 +54,22 @@ public class RegistrarProfiles {
         return data;
     }
 
-    /** "free", "paid", "limited" (redaction only / conditional), "none" or "unknown". */
-    public String privacy(String providerId) {
-        JsonNode r = byProvider.get(providerId);
-        return r == null ? "unknown" : r.path("features").path("privacy").path("value").asString("unknown");
+    public Feature feature(String providerId, String key) {
+        JsonNode f = byProvider.containsKey(providerId) ? byProvider.get(providerId).path("features").path(key) : null;
+        if (f == null || f.isMissingNode()) {
+            return new Feature("unknown", Optional.empty());
+        }
+        JsonNode c = f.path("cost");
+        Optional<Cost> cost = c.has("amount")
+                ? Optional.of(new Cost(c.path("amount").decimalValue(), c.path("currency").asString("USD"),
+                        c.path("per").asString("year"), c.path("bundle").asString(null)))
+                : Optional.empty();
+        return new Feature(f.path("value").asString("unknown"), cost);
     }
 
-    public Optional<PrivacyCost> privacyCost(String providerId) {
-        JsonNode c = byProvider.getOrDefault(providerId, JsonMapper.builder().build().createObjectNode()).path("privacyCost");
-        if (c.isMissingNode() || !c.has("amount")) {
-            return Optional.empty();
-        }
-        return Optional.of(new PrivacyCost(c.path("amount").decimalValue(), c.path("currency").asString("USD"),
-                c.path("oneTime").asBoolean(false)));
+    /** Whether the registrar adds VAT for EU consumers on top of the net price; null when unknown. */
+    public Boolean euVat(String providerId) {
+        JsonNode r = byProvider.get(providerId);
+        return r == null || !r.has("euVat") ? null : r.path("euVat").asBoolean();
     }
 }
