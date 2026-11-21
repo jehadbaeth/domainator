@@ -1,0 +1,23 @@
+# Run the whole app: docker compose up -d --build   ->   http://localhost:${DOMAINATOR_PORT:-8095}
+# API keys go in .env next to this file (see .env.example); it is optional.
+name: domainator
+
+services:
+  backend:
+    build: ./backend
+    image: domainator-backend:latest
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    mem_limit: 1g
+
+  frontend:
+    build: ./frontend
+    image: domainator-frontend:latest
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_started
+    ports:
+      - "${DOMAINATOR_BIND:-0.0.0.0}:${DOMAINATOR_PORT:-8095}:80"

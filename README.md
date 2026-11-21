@@ -16,6 +16,30 @@ cd backend && ./gradlew bootRun          # terminal 1, prices load in the backgr
 cd frontend && npm install && npm run dev  # terminal 2, open http://localhost:5173
 ```
 
+## Run with Docker
+
+```bash
+cp .env.example .env            # optional: API keys
+docker compose up -d --build    # http://localhost:8095 (DOMAINATOR_PORT to change)
+```
+
+Two containers: `backend` (Spring Boot, not exposed) and `frontend` (nginx serving the React build and
+proxying `/api` to the backend).
+
+## CI/CD
+
+* **CI** (`.github/workflows/ci.yml`) runs on every push and pull request: backend build and tests, frontend
+  lint and build, then both container images are built.
+* **CD** is pull-based, so a home server never has to be reachable from GitHub:
+  `deploy/homelab-update.sh` runs from cron every 5 minutes, and when `main` has a new commit whose CI checks
+  all passed it fast-forwards the checkout and runs `docker compose up -d --build`.
+
+  ```bash
+  git clone https://github.com/jehadbaeth/domainator.git ~/deployments/domainator
+  cd ~/deployments/domainator && docker compose up -d --build
+  (crontab -l 2>/dev/null; echo '*/5 * * * * $HOME/deployments/domainator/deploy/homelab-update.sh >> $HOME/deployments/domainator-deploy.log 2>&1') | crontab -
+  ```
+
 ## Registrars
 
 **15 work with no setup**, 13 more switch on once their keys are in `.env` (copy `.env.example`). The UI
