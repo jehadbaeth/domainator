@@ -1,0 +1,9 @@
+[Unit]
+Description=Deploy the latest Domainator commit whose CI passed
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/deployments/domainator/deploy/homelab-update.sh
+TimeoutStartSec=20min

@@ -31,13 +31,16 @@ proxying `/api` to the backend).
 * **CI** (`.github/workflows/ci.yml`) runs on every push and pull request: backend build and tests, frontend
   lint and build, then both container images are built.
 * **CD** is pull-based, so a home server never has to be reachable from GitHub:
-  `deploy/homelab-update.sh` runs from cron every 5 minutes, and when `main` has a new commit whose CI checks
-  all passed it fast-forwards the checkout and runs `docker compose up -d --build`.
+  `deploy/homelab-update.sh` runs every 5 minutes from a systemd user timer, and when `main` has a new commit
+  whose CI checks all passed it fast-forwards the checkout and runs `docker compose up -d --build`.
 
   ```bash
   git clone https://github.com/jehadbaeth/domainator.git ~/deployments/domainator
   cd ~/deployments/domainator && docker compose up -d --build
-  (crontab -l 2>/dev/null; echo '*/5 * * * * $HOME/deployments/domainator/deploy/homelab-update.sh >> $HOME/deployments/domainator-deploy.log 2>&1') | crontab -
+  mkdir -p ~/.config/systemd/user && cp deploy/domainator-deploy.{service,timer} ~/.config/systemd/user/
+  loginctl enable-linger "$USER"            # run user timers without a login session
+  systemctl --user daemon-reload && systemctl --user enable --now domainator-deploy.timer
+  journalctl --user -u domainator-deploy    # deployment log
   ```
 
 ## Registrars

@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 # Pull-based continuous deployment for a home server.
 #
-# Run from cron every few minutes. When main has a new commit and every CI check on that commit has passed,
-# it fast-forwards the checkout and rebuilds the containers. Nothing on GitHub needs access to the server.
-#
-#   */5 * * * * $HOME/deployments/domainator/deploy/homelab-update.sh >> $HOME/deployments/domainator-deploy.log 2>&1
+# Run every few minutes (deploy/domainator-deploy.timer, or cron). When main has a new commit and every CI
+# check on that commit has passed, it fast-forwards the checkout and rebuilds the containers. Nothing on
+# GitHub needs access to the server.
 #
 # Pass --force to rebuild the current commit without waiting for a new one.
 set -euo pipefail
