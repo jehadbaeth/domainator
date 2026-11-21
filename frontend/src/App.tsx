@@ -224,7 +224,8 @@ export default function App() {
       {inactive.length > 0 && (
         <details className="inactive">
           <summary>
-            {inactive.length} more registrars available. Add their API keys to <code>.env</code> to switch them on
+            Showing {providers.length} registrars that publish prices without an account. {inactive.length} more
+            need your API keys in <code>.env</code>, click to see which
           </summary>
           <ul>
             {inactive.map((p) => (
@@ -337,7 +338,9 @@ function PriceTable(props: {
         </thead>
         <tbody>
           {rows.map((r) => {
-            const bestId = r.cheapest[String(horizon)]
+            // a taken name cannot be bought at any of these prices, so nothing is "best" and nothing links to a cart
+            const taken = r.status === 'TAKEN'
+            const bestId = taken ? undefined : r.cheapest[String(horizon)]
             const best = r.quotes.find((q) => q.providerId === bestId)
             return (
               <tr key={r.key} className={r.status === 'TAKEN' ? 'taken' : ''}>
@@ -363,7 +366,12 @@ function PriceTable(props: {
                   </div>
                 </td>
                 <td className="best">
-                  {best ? (
+                  {taken ? (
+                    <>
+                      <strong>Registered</strong>
+                      <div className="sub">Someone owns this name. The prices are for the TLD in general, not this name.</div>
+                    </>
+                  ) : best ? (
                     <>
                       <strong>{money(best.totals[String(horizon)], best.currency)}</strong>
                       <div className="sub">
@@ -382,7 +390,7 @@ function PriceTable(props: {
                   return (
                     <td key={p.id} className={q.providerId === bestId ? 'cheapest' : stale ? 'stale' : ''}>
                       <div className="total">
-                        {q.buyUrl ? (
+                        {q.buyUrl && !taken ? (
                           <a href={q.buyUrl} target="_blank" rel="noreferrer">
                             {money(total, q.currency)}
                           </a>
