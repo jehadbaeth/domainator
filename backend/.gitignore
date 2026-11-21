@@ -38,3 +38,6 @@ out/
 
 ### secrets ###
 .env
+
+### local price cache
+cache/

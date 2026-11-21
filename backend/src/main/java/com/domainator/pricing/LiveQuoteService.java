@@ -95,6 +95,13 @@ public class LiveQuoteService {
         }
     }
 
+    /** Drops expired quotes so the cache does not grow without bound. */
+    @org.springframework.scheduling.annotation.Scheduled(fixedDelayString = "PT30M", initialDelayString = "PT30M")
+    public void purgeExpired() {
+        Instant cutoff = Instant.now().minus(TTL);
+        cache.values().removeIf(c -> c.at().isBefore(cutoff));
+    }
+
     public String lastError(String providerId) {
         return lastError.get(providerId);
     }

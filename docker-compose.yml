@@ -11,6 +11,8 @@ services:
       - path: .env
         required: false
     mem_limit: 1g
+    volumes:
+      - price-cache:/app/cache   # price lists survive restarts and redeploys
 
   frontend:
     build: ./frontend
@@ -21,3 +23,6 @@ services:
         condition: service_started
     ports:
       - "${DOMAINATOR_BIND:-0.0.0.0}:${DOMAINATOR_PORT:-8095}:80"
+
+volumes:
+  price-cache:

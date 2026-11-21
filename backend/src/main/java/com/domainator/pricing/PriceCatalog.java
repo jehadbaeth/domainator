@@ -1,21 +1,38 @@
 package com.domainator.pricing;
 
+import java.nio.file.Path;
+import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.domainator.config.DomainatorProperties;
+
 /**
- * In memory cache of every provider's price list. Refreshed on a background thread at startup and then
- * every {@code domainator.price-refresh-interval}, so a slow registrar never blocks the app from starting.
+ * Every provider's price list, kept in memory and on disk.
+ * <ul>
+ *   <li>At startup the last good list of each provider is loaded from disk, so a restart serves prices
+ *       immediately without contacting anyone.</li>
+ *   <li>Every {@code domainator.price-check-interval} (30 min) a provider is refreshed only if its list is older
+ *       than {@code domainator.price-refresh-interval} (12 h). Failed providers are retried after
+ *       {@code domainator.price-retry-interval} (2 h), never in a tight loop.</li>
+ *   <li>A failed refresh keeps serving the last good list.</li>
+ * </ul>
  */
 @Component
 public class PriceCatalog {
@@ -30,21 +47,48 @@ public class PriceCatalog {
 
     private final List<RegistrarProvider> providers;
     private final RootZone rootZone;
+    private final PriceCache cache;
+    private final Duration maxAge;
+    private final Duration retryAfter;
+    private final Clock clock;
     private final Map<String, ProviderState> states = new ConcurrentHashMap<>();
+    private final Map<String, Instant> lastAttempt = new ConcurrentHashMap<>();
 
-    public PriceCatalog(List<RegistrarProvider> providers, RootZone rootZone) {
-        this.providers = providers;
-        this.rootZone = rootZone;
-        providers.forEach(p -> states.put(p.id(), new ProviderState(p, Status.LOADING, Map.of(), null, null)));
+    @Autowired
+    public PriceCatalog(List<RegistrarProvider> providers, RootZone rootZone, DomainatorProperties props, Clock clock) {
+        this(providers, rootZone, new PriceCache(props.cacheDir() == null ? null : Path.of(props.cacheDir())),
+                props.priceRefreshInterval(), props.priceRetryInterval(), clock);
     }
 
-    @Scheduled(initialDelay = 0, fixedDelayString = "${domainator.price-refresh-interval:12h}")
-    public void refreshAll() {
+    PriceCatalog(List<RegistrarProvider> providers, RootZone rootZone, PriceCache cache, Duration maxAge,
+                 Duration retryAfter, Clock clock) {
+        this.providers = providers;
+        this.rootZone = rootZone;
+        this.cache = cache;
+        this.maxAge = maxAge;
+        this.retryAfter = retryAfter;
+        this.clock = clock;
+        for (RegistrarProvider p : providers) {
+            Optional<PriceCache.Entry> cached = cache.load(p.id());
+            states.put(p.id(), cached
+                    .map(c -> new ProviderState(p, Status.READY, c.prices(), c.fetchedAt(), null))
+                    .orElse(new ProviderState(p, Status.LOADING, Map.of(), null, null)));
+            cached.ifPresent(c -> log.info("Loaded {} cached prices for {} from {}", c.prices().size(), p.id(), c.fetchedAt()));
+        }
+    }
+
+    /** Refreshes the providers whose price list is missing or too old. Cheap to call often. */
+    @Scheduled(initialDelay = 0, fixedDelayString = "${domainator.price-check-interval:30m}")
+    public void refreshDue() {
+        List<RegistrarProvider> due = providers.stream().filter(this::isDue).toList();
+        if (due.isEmpty()) {
+            return;
+        }
         rootZone.refresh();
         // dedicated threads: several providers sleep between page requests, which would starve the common pool
-        java.util.concurrent.ExecutorService pool = java.util.concurrent.Executors.newFixedThreadPool(Math.min(12, Math.max(1, providers.size())));
+        ExecutorService pool = Executors.newFixedThreadPool(Math.min(12, due.size()));
         try {
-            pool.invokeAll(providers.stream().map(p -> (java.util.concurrent.Callable<Void>) () -> {
+            pool.invokeAll(due.stream().map(p -> (Callable<Void>) () -> {
                 refresh(p);
                 return null;
             }).toList());
@@ -55,20 +99,33 @@ public class PriceCatalog {
         }
     }
 
+    boolean isDue(RegistrarProvider p) {
+        Instant now = clock.instant();
+        Instant attempted = lastAttempt.get(p.id());
+        if (attempted != null && attempted.plus(retryAfter).isAfter(now)) {
+            return false; // tried recently (and failed, or it would be fresh): do not hammer the registrar
+        }
+        ProviderState s = states.get(p.id());
+        return s == null || s.updatedAt() == null || !s.updatedAt().plus(maxAge).isAfter(now);
+    }
+
     void refresh(RegistrarProvider provider) {
         ProviderState old = states.get(provider.id());
+        lastAttempt.put(provider.id(), clock.instant());
         try {
             long start = System.currentTimeMillis();
             // Drop TLDs listed at 0.00 (not actually sold) and names that are not in the DNS root zone.
             Map<String, TldPrice> prices = provider.fetchPrices().entrySet().stream()
                     .filter(e -> e.getValue().registration().signum() > 0 && e.getValue().renewal().signum() > 0)
                     .filter(e -> rootZone.contains(e.getKey()))
-                    .collect(java.util.stream.Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+                    .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
             if (prices.size() < provider.minExpectedTlds()) {
                 throw new IllegalStateException("only " + prices.size() + " prices found, expected at least "
                         + provider.minExpectedTlds() + "; the page layout probably changed");
             }
-            states.put(provider.id(), new ProviderState(provider, Status.READY, prices, Instant.now(), null));
+            Instant now = clock.instant();
+            states.put(provider.id(), new ProviderState(provider, Status.READY, prices, now, null));
+            cache.save(provider.id(), prices, now);
             log.info("Loaded {} TLD prices from {} in {} ms", prices.size(), provider.id(), System.currentTimeMillis() - start);
         } catch (Exception e) {
             String error = Secrets.describe(e);

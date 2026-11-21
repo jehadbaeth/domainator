@@ -117,7 +117,15 @@ Paid add-on prices and VAT behaviour live in `registrars.json` next to the featu
 | Real TLD list | IANA root zone list (filters out Porkbun's Handshake names) |
 | Currency conversion | ECB daily reference rates |
 
-Price lists refresh every 12 h. Availability and live quotes are cached for 15 min.
+### Caching (to keep request volume low)
+
+* **Price lists** are kept on disk (`cache-dir`, a Docker volume) and only refetched when older than 12 h,
+  checked every 30 min. A restart or redeploy serves the cached lists without contacting any registrar. A
+  registrar whose refresh failed is retried after 2 h, and its last good list keeps being served.
+* **Availability** (DNS + RDAP): registered names are cached for 24 h, free names for 1 h, failures not at all.
+  At most 2 parallel requests go to any single RDAP server.
+* **Live quotes**: 15 min per registrar and domain, including "no quote".
+* One-page-per-TLD sources and Vercel are fetched sequentially with a pause between requests.
 
 ## How the cost is calculated
 

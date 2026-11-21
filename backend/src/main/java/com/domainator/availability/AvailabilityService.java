@@ -58,7 +58,7 @@ public class AvailabilityService {
     record Bootstrap(List<List<List<String>>> services) {
     }
 
-    private record Cached(Result result, Instant at) {
+    private record Cached(Result result, Instant expires) {
     }
 
     private final DomainatorProperties.Availability config;
@@ -66,6 +66,7 @@ public class AvailabilityService {
     private final HttpClient http;
     private final ExecutorService pool;
     private final Map<String, Cached> cache = new ConcurrentHashMap<>();
+    private final Map<String, java.util.concurrent.Semaphore> hostSlots = new ConcurrentHashMap<>();
     private volatile Map<String, String> rdapServers = Map.of();
 
     public AvailabilityService(DomainatorProperties props, RestClient rest) {
@@ -121,14 +122,30 @@ public class AvailabilityService {
 
     public Result check(String domain) {
         Cached c = cache.get(domain);
-        if (c != null && c.at().plus(config.cacheTtl()).isAfter(Instant.now())) {
+        if (c != null && c.expires().isAfter(Instant.now())) {
             return c.result();
         }
         Result r = doCheck(domain);
-        if (r.status() != Status.UNKNOWN) {
-            cache.put(domain, new Cached(r, Instant.now()));
+        // UNKNOWN (timeouts, rate limits) is not cached so the next search tries again
+        if (r.status() == Status.TAKEN) {
+            cache.put(domain, new Cached(r, Instant.now().plus(config.takenCacheTtl())));
+        } else if (r.status() != Status.UNKNOWN) {
+            cache.put(domain, new Cached(r, Instant.now().plus(config.availableCacheTtl())));
         }
         return r;
+    }
+
+    /** Drops expired answers so the cache does not grow without bound. */
+    @Scheduled(fixedDelayString = "PT30M", initialDelayString = "PT30M")
+    public void purgeExpired() {
+        Instant now = Instant.now();
+        cache.values().removeIf(c -> !c.expires().isAfter(now));
+    }
+
+    private java.util.concurrent.Semaphore hostSlot(String url) {
+        String host = URI.create(url).getHost();
+        return hostSlots.computeIfAbsent(host == null ? url : host,
+                h -> new java.util.concurrent.Semaphore(Math.max(1, config.perHostConcurrency())));
     }
 
     private Result doCheck(String domain) {
@@ -152,17 +169,26 @@ public class AvailabilityService {
 
     private Result rdap(String base, String domain) {
         String url = (base.endsWith("/") ? base : base + "/") + "domain/" + domain;
+        java.util.concurrent.Semaphore slot = hostSlot(url);
         try {
-            HttpRequest req = HttpRequest.newBuilder(URI.create(url))
-                    .timeout(config.timeout())
-                    .header("Accept", "application/rdap+json, application/json")
-                    .GET().build();
-            int code = http.send(req, HttpResponse.BodyHandlers.discarding()).statusCode();
-            return switch (code) {
-                case 200 -> new Result(Status.TAKEN, "rdap");
-                case 404 -> new Result(Status.AVAILABLE, "rdap");
-                default -> new Result(Status.UNKNOWN, "rdap http " + code);
-            };
+            if (!slot.tryAcquire(config.timeout().toMillis(), TimeUnit.MILLISECONDS)) {
+                return new Result(Status.UNKNOWN, "rdap busy");
+            }
+            try {
+                HttpRequest req = HttpRequest.newBuilder(URI.create(url))
+                        .timeout(config.timeout())
+                        .header("Accept", "application/rdap+json, application/json")
+                        .header("User-Agent", "domainator/0.2 (personal domain price comparison)")
+                        .GET().build();
+                int code = http.send(req, HttpResponse.BodyHandlers.discarding()).statusCode();
+                return switch (code) {
+                    case 200 -> new Result(Status.TAKEN, "rdap");
+                    case 404 -> new Result(Status.AVAILABLE, "rdap");
+                    default -> new Result(Status.UNKNOWN, "rdap http " + code);
+                };
+            } finally {
+                slot.release();
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return new Result(Status.UNKNOWN, "interrupted");

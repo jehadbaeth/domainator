@@ -17,7 +17,7 @@ class SuggestionGeneratorTest {
 
     private static final Set<String> KNOWN = Set.of("com", "io", "dev", "co", "co.uk", "ly");
 
-    private final SuggestionGenerator gen = new SuggestionGenerator(new DomainatorProperties("EUR", null,
+    private final SuggestionGenerator gen = new SuggestionGenerator(new DomainatorProperties("EUR", null, null, null,
             new DomainatorProperties.Suggestions(List.of("com", "io", "dev", "unsold"), List.of("com"),
                     List.of("get"), List.of("hq"), 50, true),
             null, Map.of(), null, null));

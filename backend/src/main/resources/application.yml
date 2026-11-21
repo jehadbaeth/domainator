@@ -29,7 +29,12 @@ spring:
 domainator:
   # Currency all prices are converted to (ECB daily rates). The UI can override it per search.
   display-currency: EUR
+  # Price lists are refetched when older than this. Checked every price-check-interval; a provider that failed
+  # is retried after price-retry-interval. Lists survive restarts in cache-dir (empty = memory only).
   price-refresh-interval: 12h
+  price-check-interval: 30m
+  price-retry-interval: 2h
+  cache-dir: ${DOMAINATOR_CACHE_DIR:./cache}
 
   suggestions:
     # The searched name is tried on all of these (first one counts as the "exact" match if no TLD was typed).
@@ -43,8 +48,10 @@ domainator:
 
   availability:
     concurrency: 8
+    per-host-concurrency: 2     # parallel requests to one RDAP server
     timeout: 6s
-    cache-ttl: 15m
+    taken-cache-ttl: 24h        # registered names rarely become free
+    available-cache-ttl: 1h
     # TLDs whose registry RDAP server is not listed in the IANA bootstrap file (checked 2026-11).
     # Without an entry these fall back to DNS and show "likely available".
     rdap-overrides:

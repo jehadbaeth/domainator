@@ -27,7 +27,7 @@ class RegistrarProfilesTest {
     void datasetIsConsistent() throws Exception {
         RegistrarProfiles profiles = new RegistrarProfiles();
         // every provider id must be a provider the app knows (active or not)
-        ProviderRegistry registry = new ProviderRegistry(new DomainatorProperties("EUR", null, null, null, Map.of(),
+        ProviderRegistry registry = new ProviderRegistry(new DomainatorProperties("EUR", null, null, null, null, null, Map.of(),
                 Map.of("regru", Map.of("enabled", "true")), List.of()), RestClient.create(), Clock.systemUTC());
         Set<String> known = registry.active().stream().map(RegistrarProvider::id).collect(Collectors.toSet());
         registry.inactive().forEach(i -> known.add(i.id()));

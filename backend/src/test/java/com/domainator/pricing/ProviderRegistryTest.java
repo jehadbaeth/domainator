@@ -14,7 +14,7 @@ import com.domainator.config.DomainatorProperties;
 class ProviderRegistryTest {
 
     private static ProviderRegistry registry(Map<String, Map<String, String>> providers) {
-        DomainatorProperties props = new DomainatorProperties("EUR", null, null, null, Map.of(), providers, List.of());
+        DomainatorProperties props = new DomainatorProperties("EUR", null, null, null, null, null, Map.of(), providers, List.of());
         return new ProviderRegistry(props, RestClient.create(), Clock.systemUTC());
     }
 
