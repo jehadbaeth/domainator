@@ -70,6 +70,7 @@ export default function App() {
   const [resultCurrency, setResultCurrency] = useState(currency)
   const [registrarData, setRegistrarData] = useState<RegistrarData | null>(null)
   const [comRow, setComRow] = useState<TldRow | null>(null)
+  const [defaultTlds, setDefaultTlds] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -88,6 +89,7 @@ export default function App() {
     refresh()
     api.currencies().then(setCurrencies).catch(() => undefined)
     api.registrars().then(setRegistrarData).catch(() => undefined)
+    api.defaults().then((d) => setDefaultTlds(d.tlds)).catch(() => undefined)
     return () => window.clearTimeout(timer)
   }, [])
 
@@ -113,7 +115,8 @@ export default function App() {
     setError(null)
     try {
       if (!providerIds.length) throw new Error('No registrar selected. Open Settings to choose some.')
-      const res = await api.search(query, providerIds, currency, years, settings.addons, vat)
+      const res = await api.search(query, providerIds, currency, years, settings.addons, vat,
+        settings.tlds ?? [], settings.variations)
       setResults(res.results)
       setResultCurrency(res.currency)
     } catch (err) {
@@ -144,12 +147,14 @@ export default function App() {
     if (tab === 'search' && results) runSearch()
     if (tab === 'tlds' || tab === 'registrars') loadTlds()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tab, currency, horizon, vat, settings.addons.join(','), excluded.join(','), providers.filter((p) => p.status === 'READY').length])
+  }, [tab, currency, horizon, vat, settings.addons.join(','), settings.variations, (settings.tlds ?? []).join(','), excluded.join(','), providers.filter((p) => p.status === 'READY').length])
 
 
   const visible = useMemo(() => {
     if (!results) return []
-    let list = showTaken ? results : results.filter((r) => r.availability !== 'TAKEN')
+    // the searched name is always shown on every TLD (taken ones dimmed); only taken variations can be hidden
+    const isVariation = (r: DomainResult) => r.kind === 'VARIATION' || r.kind === 'DOMAIN_HACK'
+    let list = showTaken ? results : results.filter((r) => r.availability !== 'TAKEN' || !isVariation(r))
     if (sort === 'price') {
       list = [...list].sort(
         (a, b) => bestTotal(a.quotes, horizon, resultCurrency) - bestTotal(b.quotes, horizon, resultCurrency),
@@ -158,7 +163,9 @@ export default function App() {
     return list
   }, [results, showTaken, sort, horizon, resultCurrency])
 
-  const takenCount = results ? results.filter((r) => r.availability === 'TAKEN').length : 0
+  const takenCount = results
+    ? results.filter((r) => r.availability === 'TAKEN' && (r.kind === 'VARIATION' || r.kind === 'DOMAIN_HACK')).length
+    : 0
   const loadingProviders = providers.filter((p) => p.status === 'LOADING')
 
   return (
@@ -225,7 +232,7 @@ export default function App() {
             </label>
             <label className="control inline">
               <input type="checkbox" checked={showTaken} onChange={(e) => setShowTaken(e.target.checked)} />
-              Show taken ({takenCount})
+              Show taken variations ({takenCount})
             </label>
           </>
         )}
@@ -244,6 +251,7 @@ export default function App() {
           onSelected={(ids) => setExcluded(providers.map((p) => p.id).filter((id) => !ids.includes(id)))}
           settings={settings}
           onSettings={setSettings}
+          defaultTlds={defaultTlds}
         />
       )}
 
@@ -411,6 +419,8 @@ function PriceTable(props: {
                       <strong>Registered</strong>
                       <div className="sub">Someone owns this name. The prices are for the TLD in general, not this name.</div>
                     </>
+                  ) : r.quotes.length === 0 ? (
+                    <span className="sub wrap">Not sold by your selected registrars</span>
                   ) : best ? (
                     <>
                       <strong>{money(best.totals[String(horizon)], best.currency)}</strong>

@@ -68,6 +68,9 @@ Entries marked *snippet* could only be read from search excerpts because the sit
 
 The defaults give the lowest prices: every public registrar, net prices, no add-ons.
 
+* **Search:** "Suggest name variations" (prefixes, suffixes, hyphens, domain hacks) can be switched off, and
+  the TLD list your name is checked on can be edited. Your name always shows on every listed TLD, taken or
+  not; a TLD none of your selected registrars sells says so instead of disappearing.
 * **Registrars to compare:** tick any combination, or use All, None, "Great & good budget" or "Free privacy".
   Only ticked registrars are compared and shown as columns.
 * **VAT:** off shows net prices. On adds your rate (default 19%) for registrars that charge EU VAT;

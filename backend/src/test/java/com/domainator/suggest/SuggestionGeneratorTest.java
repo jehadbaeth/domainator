@@ -35,7 +35,15 @@ class SuggestionGeneratorTest {
         List<String> domains = c.stream().map(Candidate::domain).toList();
         assertThat(c.get(0)).isEqualTo(new Candidate("acmeco.com", "acmeco", "com", Kind.EXACT));
         assertThat(domains).contains("acmeco.io", "acmeco.dev", "acme.co", "getacmeco.com", "acmecohq.com");
-        assertThat(domains).doesNotContain("acmeco.unsold");
+        // configured TLDs are always checked, even if no selected registrar sells them
+        assertThat(domains).contains("acmeco.unsold");
+    }
+
+    @Test
+    void variationsCanBeSwitchedOff() {
+        List<Candidate> c = gen.generate(gen.parse("acmeco", KNOWN), KNOWN, List.of("de", "com"), false);
+        assertThat(c.stream().map(Candidate::domain)).containsExactly("acmeco.de", "acmeco.com");
+        assertThat(c.get(0).kind()).isEqualTo(Kind.EXACT);
     }
 
     @Test

@@ -42,8 +42,11 @@ public class SearchController {
                                  @RequestParam(required = false) String currency,
                                  @RequestParam(defaultValue = "1,5,10") String years,
                                  @RequestParam(required = false) String addons,
-                                 @RequestParam(defaultValue = "0") int vat) {
-        return service.search(q, ids(providers), currency, years(years), new PriceOptions(addons(addons), vat));
+                                 @RequestParam(defaultValue = "0") int vat,
+                                 @RequestParam(required = false) String tlds,
+                                 @RequestParam(defaultValue = "true") boolean variations) {
+        return service.search(q, ids(providers), currency, years(years), new PriceOptions(addons(addons), vat),
+                tlds(tlds), variations);
     }
 
     /** Every TLD ranked by total cost over the longest horizon. */
@@ -69,6 +72,12 @@ public class SearchController {
         return profiles.all();
     }
 
+    /** Defaults the UI starts from, e.g. the TLDs a search checks. */
+    @GetMapping("/defaults")
+    public Map<String, Object> defaults() {
+        return Map.of("tlds", service.defaultTlds());
+    }
+
     @GetMapping("/currencies")
     public Set<String> currencies() {
         return service.currencies();
@@ -84,6 +93,31 @@ public class SearchController {
             return Set.of();
         }
         return Arrays.stream(csv.split(",")).map(String::trim).filter(s -> !s.isEmpty()).collect(Collectors.toSet());
+    }
+
+    /** User supplied TLD list: lower case, punycode, no leading dot, at most 60. */
+    private static List<String> tlds(String csv) {
+        if (csv == null || csv.isBlank()) {
+            return List.of();
+        }
+        List<String> out = new java.util.ArrayList<>();
+        for (String raw : csv.split(",")) {
+            String t = raw.trim().toLowerCase().replaceFirst("^\\.", "");
+            if (t.isEmpty()) {
+                continue;
+            }
+            String ascii = java.net.IDN.toASCII(t);
+            if (!ascii.matches("[a-z0-9-]{2,63}(\\.[a-z0-9-]{2,63})?")) {
+                throw new IllegalArgumentException("'" + raw.trim() + "' is not a TLD");
+            }
+            if (!out.contains(ascii)) {
+                out.add(ascii);
+            }
+        }
+        if (out.size() > 60) {
+            throw new IllegalArgumentException("at most 60 TLDs");
+        }
+        return out;
     }
 
     private static Set<String> addons(String csv) {

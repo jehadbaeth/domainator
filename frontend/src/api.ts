@@ -129,9 +129,28 @@ export const api = {
   providers: () => get<ProviderInfo[]>('/api/providers'),
   currencies: () => get<string[]>('/api/currencies'),
   registrars: () => get<RegistrarData>('/api/registrars'),
-  search: (q: string, providers: string[], currency: string, years: number[], addons: string[], vat: number) =>
+  defaults: () => get<{ tlds: string[] }>('/api/defaults'),
+  search: (
+    q: string,
+    providers: string[],
+    currency: string,
+    years: number[],
+    addons: string[],
+    vat: number,
+    tlds: string[],
+    variations: boolean,
+  ) =>
     get<SearchResponse>(
-      `/api/search?${params({ q, providers: providers.join(','), currency, years: years.join(','), addons: addons.join(','), vat: String(vat) })}`,
+      `/api/search?${params({
+        q,
+        providers: providers.join(','),
+        currency,
+        years: years.join(','),
+        addons: addons.join(','),
+        vat: String(vat),
+        tlds: tlds.join(','),
+        variations: String(variations),
+      })}`,
     ),
   tlds: (providers: string[], currency: string, years: number[], limit: number, addons: string[], vat: number) =>
     get<TldResponse>(

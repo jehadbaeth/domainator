@@ -76,28 +76,36 @@ public class SuggestionGenerator {
         return new Query(label, hyphenated, tld);
     }
 
-    /**
-     * @param knownTlds TLDs that at least one selected registrar sells; candidates on other TLDs are dropped
-     *                  (except the TLD the user typed explicitly)
-     */
+    /** Generates with the configured TLD list and variations on. */
     public List<Candidate> generate(Query q, Set<String> knownTlds) {
+        return generate(q, knownTlds, config.tlds(), true);
+    }
+
+    /**
+     * @param knownTlds  TLDs that at least one selected registrar sells; only used to find domain hacks
+     * @param tlds       TLDs the searched name is always checked on, even if no selected registrar sells them
+     *                   (the row then says so instead of silently disappearing)
+     * @param variations false = only the searched name on each TLD, no prefixes, suffixes, hyphens or hacks
+     */
+    public List<Candidate> generate(Query q, Set<String> knownTlds, List<String> tlds, boolean variations) {
         Map<String, Candidate> out = new LinkedHashMap<>();
-        int max = config.maxCandidates();
+        int max = Math.max(config.maxCandidates(), tlds.size() + 1);
 
         if (q.tld() != null) {
             add(out, q.label(), q.tld(), Kind.EXACT, max);
         }
-        for (String tld : config.tlds()) {
-            if (knownTlds.contains(tld)) {
-                add(out, q.label(), tld, q.tld() == null && tld.equals(config.tlds().get(0)) ? Kind.EXACT : Kind.OTHER_TLD, max);
-            }
+        for (String tld : tlds) {
+            add(out, q.label(), tld, q.tld() == null && tld.equals(tlds.get(0)) ? Kind.EXACT : Kind.OTHER_TLD, max);
+        }
+        if (!variations) {
+            return new ArrayList<>(out.values());
         }
         // TLDs to use for variations: the one the user typed first, then the configured ones
         List<String> variationTlds = new ArrayList<>();
-        if (q.tld() != null && knownTlds.contains(q.tld())) {
+        if (q.tld() != null) {
             variationTlds.add(q.tld());
         }
-        config.modifierTlds().stream().filter(knownTlds::contains).filter(t -> !variationTlds.contains(t)).forEach(variationTlds::add);
+        config.modifierTlds().stream().filter(t -> !variationTlds.contains(t)).forEach(variationTlds::add);
 
         if (q.hyphenated() != null) {
             for (String tld : variationTlds) {
@@ -128,6 +136,10 @@ public class SuggestionGenerator {
             }
         }
         return new ArrayList<>(out.values());
+    }
+
+    public List<String> defaultTlds() {
+        return config.tlds();
     }
 
     private static void add(Map<String, Candidate> out, String label, String tld, Kind kind, int max) {

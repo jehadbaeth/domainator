@@ -65,14 +65,15 @@ public class SearchService {
     }
 
     public SearchResponse search(String query, Set<String> providerIds, String currency, List<Integer> years,
-                                 PriceOptions opts) {
+                                 PriceOptions opts, List<String> tlds, boolean variations) {
         List<ProviderState> states = selected(providerIds);
         Set<String> ids = states.stream().map(s -> s.provider().id()).collect(Collectors.toSet());
         Set<String> knownTlds = catalog.knownTlds(ids);
         String cur = currency(currency);
 
         SuggestionGenerator.Query q = suggestions.parse(query, knownTlds);
-        List<Candidate> candidates = suggestions.generate(q, knownTlds);
+        List<Candidate> candidates = suggestions.generate(q, knownTlds,
+                tlds == null || tlds.isEmpty() ? suggestions.defaultTlds() : tlds, variations);
         Map<String, AvailabilityService.Result> avail =
                 availability.checkAll(candidates.stream().map(Candidate::domain).toList());
 
@@ -224,6 +225,10 @@ public class SearchService {
         registry.inactive().forEach(i -> out.add(new ProviderInfo(i.id(), i.name(), "INACTIVE", i.kind(), 0, null,
                 i.reason(), null, i.note())));
         return out;
+    }
+
+    public List<String> defaultTlds() {
+        return suggestions.defaultTlds();
     }
 
     public Set<String> currencies() {

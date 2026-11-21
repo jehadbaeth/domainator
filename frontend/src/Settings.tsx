@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { FeatureKey, ProviderInfo, RegistrarProfile } from './api'
 import { BudgetBadge, FEATURES } from './Registrars'
 
@@ -5,10 +6,14 @@ export interface PriceSettings {
   addons: FeatureKey[]
   vatOn: boolean
   vatRate: number
+  /** suggest prefixes, suffixes, hyphens and domain hacks besides the searched name */
+  variations: boolean
+  /** TLDs the searched name is checked on; null = the server's default list */
+  tlds: string[] | null
 }
 
 /** Defaults give the lowest numbers: net prices, no add-ons. */
-export const LOWEST: PriceSettings = { addons: [], vatOn: false, vatRate: 19 }
+export const LOWEST: PriceSettings = { addons: [], vatOn: false, vatRate: 19, variations: true, tlds: null }
 
 export function summary(settings: PriceSettings, used: number, total: number) {
   const parts = [`Comparing ${used} of ${total} registrars`]
@@ -18,7 +23,47 @@ export function summary(settings: PriceSettings, used: number, total: number) {
       ? `with ${settings.addons.map((a) => FEATURES.find((f) => f.key === a)?.label.toLowerCase()).join(', ')}`
       : 'no add-ons',
   )
+  if (!settings.variations) parts.push('no variations')
+  if (settings.tlds) parts.push(`${settings.tlds.length} chosen TLDs`)
   return parts.join(' · ')
+}
+
+/** Edits the list of TLDs a search checks. */
+function TldEditor(props: { tlds: string[]; onChange: (t: string[]) => void; onReset: () => void; custom: boolean }) {
+  const { tlds, onChange, onReset, custom } = props
+  const [draft, setDraft] = useState('')
+  const addDraft = () => {
+    const add = draft
+      .split(/[\s,]+/)
+      .map((t) => t.trim().toLowerCase().replace(/^\./, ''))
+      .filter((t) => /^[a-z0-9-]{2,63}(\.[a-z0-9-]{2,63})?$/.test(t) && !tlds.includes(t))
+    if (add.length) onChange([...tlds, ...add])
+    setDraft('')
+  }
+  return (
+    <div className="tld-editor">
+      <div className="chips">
+        {tlds.map((t) => (
+          <span key={t} className="chip on">
+            .{t}
+            <button aria-label={`remove .${t}`} onClick={() => onChange(tlds.filter((x) => x !== t))}>
+              ×
+            </button>
+          </span>
+        ))}
+      </div>
+      <div className="row">
+        <input
+          value={draft}
+          placeholder="add e.g. de, ch, shop"
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && addDraft()}
+        />
+        <button onClick={addDraft}>Add</button>
+        {custom && <button onClick={onReset}>Default list</button>}
+      </div>
+    </div>
+  )
 }
 
 export function freeAddons(profile: RegistrarProfile | undefined) {
@@ -34,8 +79,9 @@ export function SettingsPanel(props: {
   onSelected: (ids: string[]) => void
   settings: PriceSettings
   onSettings: (s: PriceSettings) => void
+  defaultTlds: string[]
 }) {
-  const { providers, inactive, profiles, selected, onSelected, settings, onSettings } = props
+  const { providers, inactive, profiles, selected, onSelected, settings, onSettings, defaultTlds } = props
   const all = providers.map((p) => p.id)
   const toggle = (id: string) =>
     onSelected(selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id])
@@ -91,6 +137,23 @@ export function SettingsPanel(props: {
       </div>
 
       <div className="settings-col">
+        <h3>Search</h3>
+        <label className="row">
+          <input
+            type="checkbox"
+            checked={settings.variations}
+            onChange={(e) => onSettings({ ...settings, variations: e.target.checked })}
+          />
+          Suggest name variations (prefixes, suffixes, hyphens, domain hacks)
+        </label>
+        <p className="sub wrap">Your name is always checked on every TLD below, taken or not.</p>
+        <TldEditor
+          tlds={settings.tlds ?? defaultTlds}
+          custom={settings.tlds !== null}
+          onChange={(t) => onSettings({ ...settings, tlds: t })}
+          onReset={() => onSettings({ ...settings, tlds: null })}
+        />
+
         <h3>VAT</h3>
         <label className="row">
           <input
