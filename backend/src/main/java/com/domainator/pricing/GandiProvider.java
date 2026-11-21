@@ -48,7 +48,12 @@ public class GandiProvider implements RegistrarProvider {
 
     @Override
     public String buyUrl(String domain) {
-        return "https://shop.gandi.net/domain/suggest?search=" + domain;
+        return null;
+    }
+
+    @Override
+    public String tldUrl(String tld) {
+        return "https://www.gandi.net/en/domain/tld/" + tld;
     }
 
     @Override

@@ -49,6 +49,11 @@ public class PorkbunProvider implements RegistrarProvider {
     }
 
     @Override
+    public String tldUrl(String tld) {
+        return "https://porkbun.com/tld/" + tld;
+    }
+
+    @Override
     public Map<String, TldPrice> fetchPrices() {
         Response response = http.post()
                 .uri(PRICING_URL)

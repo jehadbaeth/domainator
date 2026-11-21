@@ -54,6 +54,10 @@ public final class SearchModels {
             boolean premium,
             /* true if the price came from a live per-domain check rather than the TLD price list */
             boolean live,
+            /* WHOIS privacy at this registrar: free, paid, limited (redaction only), none, unknown */
+            String privacy,
+            /* yearly privacy cost added to registration and renewal (display currency), or null */
+            BigDecimal privacyAdded,
             String promo,
             String taxNote,
             String originalCurrency,

@@ -17,15 +17,20 @@ import org.springframework.web.bind.annotation.RestController;
 import com.domainator.search.SearchModels.ProviderInfo;
 import com.domainator.search.SearchModels.SearchResponse;
 import com.domainator.search.SearchModels.TldResponse;
+import com.domainator.registrars.RegistrarProfiles;
+
+import tools.jackson.databind.JsonNode;
 
 @RestController
 @RequestMapping("/api")
 public class SearchController {
 
     private final SearchService service;
+    private final RegistrarProfiles profiles;
 
-    public SearchController(SearchService service) {
+    public SearchController(SearchService service, RegistrarProfiles profiles) {
         this.service = service;
+        this.profiles = profiles;
     }
 
     /**
@@ -35,8 +40,9 @@ public class SearchController {
     public SearchResponse search(@RequestParam String q,
                                  @RequestParam(required = false) String providers,
                                  @RequestParam(required = false) String currency,
-                                 @RequestParam(defaultValue = "1,5,10") String years) {
-        return service.search(q, ids(providers), currency, years(years));
+                                 @RequestParam(defaultValue = "1,5,10") String years,
+                                 @RequestParam(defaultValue = "false") boolean withPrivacy) {
+        return service.search(q, ids(providers), currency, years(years), withPrivacy);
     }
 
     /** Every TLD ranked by total cost over the longest horizon. */
@@ -44,13 +50,20 @@ public class SearchController {
     public TldResponse tlds(@RequestParam(required = false) String providers,
                             @RequestParam(required = false) String currency,
                             @RequestParam(defaultValue = "1,5,10") String years,
-                            @RequestParam(defaultValue = "100") int limit) {
-        return service.tlds(ids(providers), currency, years(years), Math.min(Math.max(limit, 1), 2000));
+                            @RequestParam(defaultValue = "100") int limit,
+                            @RequestParam(defaultValue = "false") boolean withPrivacy) {
+        return service.tlds(ids(providers), currency, years(years), Math.min(Math.max(limit, 1), 2000), withPrivacy);
     }
 
     @GetMapping("/providers")
     public List<ProviderInfo> providers() {
         return service.allProviders();
+    }
+
+    /** Free extras per registrar (privacy, SSL, forwarding, ...) with source links. */
+    @GetMapping("/registrars")
+    public JsonNode registrars() {
+        return profiles.all();
     }
 
     @GetMapping("/currencies")

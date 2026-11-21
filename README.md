@@ -18,36 +18,54 @@ cd frontend && npm install && npm run dev  # terminal 2, open http://localhost:5
 
 ## Registrars
 
-Public ones work with no setup. Keyed ones switch on automatically once their variables are in `.env`
-(copy `.env.example`). The UI lists inactive registrars and which variables they still need.
+**15 work with no setup**, 13 more switch on once their keys are in `.env` (copy `.env.example`). The UI
+lists inactive registrars and which variables they still need.
 
-| Registrar | Needs | Price list | Live per-domain quotes (premium) | Notes |
-|---|---|---|---|---|
-| Porkbun | nothing | yes | no | USD |
-| OVHcloud | nothing | yes | no | net prices, subsidiary configurable |
-| INWX | nothing | yes (official CSV) | no | net EUR/USD/CHF; multi-year-minimum TLDs skipped |
-| Vercel | nothing (token optional) | configured TLDs only | yes, 200 per call | anonymous limit 60 requests/min |
-| REG.RU | nothing | yes | no | off by default (Russian registrar) |
-| Namecheap | API user, key, whitelisted IPv4 | yes | premium only | API access needs 20+ domains, $50 balance or $50 spent |
-| NameSilo | API key | yes | no | your account's prices |
-| Dynadot | API key | yes | no | API3 is marked legacy by Dynadot |
-| Spaceship | key + secret | yes | yes | includes ICANN fee |
-| Name.com | username + token | yes | premium only | |
-| Internet.bs | key + password | yes | no | `INTERNETBS_TEST=true` tries the public test env (not retail prices) |
-| AWS Route 53 | IAM access key (ROUTE53_*) | yes | no | IAM `route53domains:ListPrices` |
-| GoDaddy | personal access token | no | yes | excludes ICANN fee and tax |
-| Gandi | personal access token | no | yes | net prices |
-| Cloudflare | token + account id | no | yes | beta API, subset of TLDs, no premiums |
-| Hostinger | token | yes | no | experimental: which field is the renewal price is inferred |
-| Openprovider | reseller login | yes | no | reseller membership prices |
+| Registrar | Source | Live per-domain quotes | Notes |
+|---|---|---|---|
+| Porkbun | public API | no | USD |
+| OVHcloud | public API | no | net prices, subsidiary configurable |
+| INWX | official CSV | no | net; multi-year-minimum TLDs skipped |
+| Vercel | public API | yes (premium) | 60 requests/min anonymously |
+| NearlyFreeSpeech | price page | no | 65 TLDs |
+| NameBright | price page | no | |
+| DomainFactory | price page | no | monthly gross prices, shown yearly and net |
+| one.com | price page | no | currency/VAT depend on the backend's country |
+| ALL-INKL.COM | price page | no | new gTLDs only with hosting |
+| Loopia | price page | no | SEK |
+| Namespro | price page | no | CAD |
+| EuroDNS, 101domain, Gname | one page per TLD | no | only your suggestion TLDs are read |
+| united-domains | price page | no | promo TLDs need one extra page each |
+| REG.RU | public API | no | off by default |
+| Namecheap | API key + whitelisted IP | premium only | API needs 20+ domains, $50 balance or $50 spent |
+| NameSilo, Dynadot | API key | no | |
+| Spaceship | key + secret | yes | |
+| Name.com | username + token | premium only | |
+| Internet.bs | key + password | no | `INTERNETBS_TEST=true` for the test env |
+| AWS Route 53 | `ROUTE53_*` access key | no | |
+| GoDaddy | free personal access token | yes | official API, any account |
+| Gandi, Cloudflare | token | yes | |
+| Hostinger | token | no | experimental field mapping |
+| Openprovider | reseller login | no | |
 
-Not included, and why: Joker and Netim need reseller accounts and give no reliable price format; Infomaniak's
-API has no renewal price; Regery has no public docs; IONOS, Strato, netcup, Hover and others have no price API.
-Use a `static-providers` entry in `application.yml` to type in prices for any of them.
+"Price page" sources read the registrar's public price page (server-rendered HTML) once per refresh with the
+app's own User-Agent. They break when a site is redesigned; a refresh that finds too few prices shows ERROR on
+that registrar's chip instead of silently serving a half empty list. Internal website APIs (for example the
+ones behind GoDaddy's or Namecheap's search pages) are deliberately not used.
 
-**Only Porkbun, OVHcloud, INWX, Vercel and Internet.bs (test env) were tested against the real service.**
-The keyed adapters are built and unit tested against official docs and captured responses, but have not
-seen your real account. If one fails, its error shows on the registrar chip in the UI and in the backend log.
+**Only the 15 public sources and Internet.bs (test env) were tested against the real service.** The keyed
+adapters are unit tested against official docs and captured responses but have not seen a real account.
+
+### Free extras and budget verdicts
+
+`backend/src/main/resources/registrars.json` holds, for 37 registrars, whether WHOIS privacy, SSL, email
+forwarding, a mailbox, DNS, DNSSEC, URL forwarding and 2FA are free, paid, limited or missing, each with a link
+to the official page it comes from, plus a budget verdict and the usual catches. The "Registrars & free extras"
+tab shows it with filters ("must include free privacy and SSL"), and price table headers show the key ones.
+Entries marked *snippet* could only be read from search excerpts because the site blocks automated checks.
+
+"Include WHOIS privacy cost" adds paid privacy (INWX, EuroDNS, 101domain, united-domains, NearlyFreeSpeech)
+to every year, and keeps registrars with no privacy or redaction only out of "best".
 
 ### Other data sources
 

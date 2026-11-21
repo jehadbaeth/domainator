@@ -49,7 +49,12 @@ public class InwxCsvProvider implements RegistrarProvider {
 
     @Override
     public String buyUrl(String domain) {
-        return "https://www.inwx." + site + "/en/domain/check#search=" + domain;
+        return null; // INWX's domain check has no shareable URL; link the TLD page instead
+    }
+
+    @Override
+    public String tldUrl(String tld) {
+        return "https://www.inwx." + site + "/en/" + tld.replace('.', '-') + "-domain";
     }
 
     @Override

@@ -10,6 +10,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
+import com.domainator.pricing.web.AllInklProvider;
+import com.domainator.pricing.web.DomainFactoryProvider;
+import com.domainator.pricing.web.EuroDnsProvider;
+import com.domainator.pricing.web.GnameProvider;
+import com.domainator.pricing.web.LoopiaProvider;
+import com.domainator.pricing.web.NameBrightProvider;
+import com.domainator.pricing.web.NamesproProvider;
+import com.domainator.pricing.web.NearlyFreeSpeechProvider;
+import com.domainator.pricing.web.OneComProvider;
+import com.domainator.pricing.web.OneOhOneDomainProvider;
+import com.domainator.pricing.web.UnitedDomainsProvider;
+
 import com.domainator.config.DomainatorProperties;
 
 /**
@@ -84,6 +96,32 @@ public class ProviderRegistry {
                 new Descriptor("vercel", "Vercel", "public", List.of(), List.of(), true,
                         "anonymous limit 60 requests/min; set VERCEL_TOKEN in case keyless access stops",
                         s -> new VercelProvider(http, s, suggestionTlds)),
+                // public price pages (server-rendered HTML read once per refresh; can break when a site changes)
+                new Descriptor("nfs", "NearlyFreeSpeech", "price page", List.of(), List.of(), true,
+                        "needs a NearlyFreeSpeech account to register", s -> new NearlyFreeSpeechProvider(http)),
+                new Descriptor("namebright", "NameBright", "price page", List.of(), List.of(), true, null,
+                        s -> new NameBrightProvider(http)),
+                new Descriptor("domainfactory", "DomainFactory", "price page", List.of(), List.of(), true,
+                        "monthly prices on the page, shown here per year and without VAT",
+                        s -> new DomainFactoryProvider(http)),
+                new Descriptor("onecom", "one.com", "price page", List.of(), List.of(), true,
+                        "currency and VAT depend on the country the backend runs in",
+                        s -> new OneComProvider(http)),
+                new Descriptor("allinkl", "ALL-INKL.COM", "price page", List.of(), List.of(), true,
+                        "classic TLDs can be bought alone, new gTLDs only with hosting", s -> new AllInklProvider(http)),
+                new Descriptor("loopia", "Loopia", "price page", List.of(), List.of(), true, "SEK, 39 TLDs",
+                        s -> new LoopiaProvider(http)),
+                new Descriptor("namespro", "Namespro", "price page", List.of(), List.of(), true, "CAD, 25 TLDs",
+                        s -> new NamesproProvider(http)),
+                new Descriptor("eurodns", "EuroDNS", "price page", List.of(), List.of(), true,
+                        "one page per TLD, only your suggestion TLDs are read", s -> new EuroDnsProvider(http, suggestionTlds)),
+                new Descriptor("101domain", "101domain", "price page", List.of(), List.of(), true,
+                        "one page per TLD, only your suggestion TLDs are read", s -> new OneOhOneDomainProvider(http, suggestionTlds)),
+                new Descriptor("gname", "Gname", "price page", List.of(), List.of(), true,
+                        "one page per TLD, only your suggestion TLDs are read", s -> new GnameProvider(http, suggestionTlds)),
+                new Descriptor("uniteddomains", "united-domains", "price page", List.of(), List.of(), true,
+                        "promotion TLDs need one extra page each; only your suggestion TLDs get those",
+                        s -> new UnitedDomainsProvider(http, suggestionTlds)),
                 new Descriptor("regru", "REG.RU", "public", List.of(), List.of(), false,
                         "Russian registrar, paying from the EU may not be possible",
                         s -> new RegRuProvider(http, s)),

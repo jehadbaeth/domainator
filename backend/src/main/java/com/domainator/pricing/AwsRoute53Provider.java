@@ -46,7 +46,7 @@ public class AwsRoute53Provider implements RegistrarProvider {
 
     @Override
     public String buyUrl(String domain) {
-        return "https://console.aws.amazon.com/route53/domains/home#/DomainSearch";
+        return "https://console.aws.amazon.com/route53/domains/home#/DomainSearch"; // needs AWS login
     }
 
     @Override

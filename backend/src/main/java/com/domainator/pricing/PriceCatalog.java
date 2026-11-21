@@ -41,7 +41,18 @@ public class PriceCatalog {
     @Scheduled(initialDelay = 0, fixedDelayString = "${domainator.price-refresh-interval:12h}")
     public void refreshAll() {
         rootZone.refresh();
-        providers.parallelStream().forEach(this::refresh);
+        // dedicated threads: several providers sleep between page requests, which would starve the common pool
+        java.util.concurrent.ExecutorService pool = java.util.concurrent.Executors.newFixedThreadPool(Math.min(12, Math.max(1, providers.size())));
+        try {
+            pool.invokeAll(providers.stream().map(p -> (java.util.concurrent.Callable<Void>) () -> {
+                refresh(p);
+                return null;
+            }).toList());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            pool.shutdown();
+        }
     }
 
     void refresh(RegistrarProvider provider) {
@@ -53,6 +64,10 @@ public class PriceCatalog {
                     .filter(e -> e.getValue().registration().signum() > 0 && e.getValue().renewal().signum() > 0)
                     .filter(e -> rootZone.contains(e.getKey()))
                     .collect(java.util.stream.Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+            if (prices.size() < provider.minExpectedTlds()) {
+                throw new IllegalStateException("only " + prices.size() + " prices found, expected at least "
+                        + provider.minExpectedTlds() + "; the page layout probably changed");
+            }
             states.put(provider.id(), new ProviderState(provider, Status.READY, prices, Instant.now(), null));
             log.info("Loaded {} TLD prices from {} in {} ms", prices.size(), provider.id(), System.currentTimeMillis() - start);
         } catch (Exception e) {

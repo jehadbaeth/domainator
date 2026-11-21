@@ -1,0 +1,1816 @@
+{
+ "asOf": "2026-11-21",
+ "note": "Researched from official registrar pages. \"snippet\" means only a search engine excerpt of an official page could be read; check those in a browser.",
+ "registrars": [
+  {
+   "id": "porkbun",
+   "name": "Porkbun",
+   "providerId": "porkbun",
+   "budget": "great",
+   "verdict": "Cheapest verified flat renewal plus the most complete free bundle.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "real proxy, free every renewal; not offered on 71 TLDs incl. .de .uk .eu .us",
+     "source": "https://porkbun.com/products/whois_privacy"
+    },
+    "ssl": {
+     "value": "free",
+     "note": "Let's Encrypt, auto renewed, no hosting needed",
+     "source": "https://porkbun.com/products/domains"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "20 addresses per domain, more at $3/yr each",
+     "source": "https://porkbun.com/products/email_forwarding"
+    },
+    "mailbox": {
+     "value": "paid",
+     "note": "15 day trial, then from $3/month",
+     "source": "https://porkbun.com/products/domains"
+    },
+    "dns": {
+     "value": "free",
+     "note": "external nameservers allowed",
+     "source": "https://porkbun.com/products/domains"
+    },
+    "dnssec": {
+     "value": "free",
+     "note": "on Porkbun DNS, DS records for external DNS",
+     "source": "https://porkbun.com/products/domains"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "note": "301, 302 and masked",
+     "source": "https://porkbun.com/products/domains"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP, WebAuthn keys, passkeys",
+     "source": "https://porkbun.com/products/two_factor_authentication"
+    }
+   },
+   "catches": "Auto renew on by default; $200 restore fee; expired domains show a parking page.",
+   "sources": [
+    "https://porkbun.com/products/domains",
+    "https://porkbun.com/support/payment_options"
+   ],
+   "website": "https://porkbun.com"
+  },
+  {
+   "id": "dynadot",
+   "name": "Dynadot",
+   "providerId": "dynadot",
+   "budget": "great",
+   "verdict": "Porkbun price tier and the only cheap registrar with a permanently free mailbox.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "real proxy, free for life; some ccTLDs excluded",
+     "source": "https://www.dynadot.com/domain/security"
+    },
+    "ssl": {
+     "value": "unknown",
+     "note": "no free certificate found"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "10 addresses plus catch all, needs Dynadot nameservers",
+     "source": "https://www.dynadot.com/help/question/email-forwarding"
+    },
+    "mailbox": {
+     "value": "free",
+     "note": "1 address, 1 GB, 25 sent mails/day",
+     "source": "https://www.dynadot.com/email"
+    },
+    "dns": {
+     "value": "free",
+     "note": "external nameservers allowed",
+     "source": "https://www.dynadot.com/domain/com"
+    },
+    "dnssec": {
+     "value": "limited",
+     "note": "only with third party nameservers",
+     "source": "https://www.dynadot.com/help/question/set-DNSSEC"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "note": "including stealth forwarding",
+     "source": "https://www.dynadot.com/domain/com"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP, YubiKey, SMS",
+     "source": "https://www.dynadot.com/domain/security"
+    }
+   },
+   "catches": "Restore fee about $101; Registry Lock is paid.",
+   "sources": [
+    "https://www.dynadot.com/domain/com",
+    "https://www.dynadot.com/payment-options"
+   ],
+   "website": "https://www.dynadot.com"
+  },
+  {
+   "id": "cloudflare",
+   "name": "Cloudflare Registrar",
+   "providerId": "cloudflare",
+   "budget": "great",
+   "verdict": "At cost pricing, but you must use Cloudflare DNS and privacy is only redaction.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "limited",
+     "note": "redaction only, not a proxy",
+     "source": "https://developers.cloudflare.com/registrar/account-options/whois-redaction/"
+    },
+    "ssl": {
+     "value": "free",
+     "note": "Universal SSL on proxied hostnames",
+     "source": "https://developers.cloudflare.com/registrar/faq/"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "Email Routing, 200 rules per domain",
+     "source": "https://developers.cloudflare.com/email-routing/limits/"
+    },
+    "mailbox": {
+     "value": "none"
+    },
+    "dns": {
+     "value": "limited",
+     "note": "free but required; external nameservers not allowed",
+     "source": "https://developers.cloudflare.com/registrar/faq/"
+    },
+    "dnssec": {
+     "value": "free",
+     "note": "one click",
+     "source": "https://developers.cloudflare.com/registrar/faq/"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "note": "10 redirects per zone on the free plan",
+     "source": "https://developers.cloudflare.com/rules/url-forwarding/"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP, WebAuthn keys",
+     "source": "https://developers.cloudflare.com/fundamentals/user-profiles/2fa/"
+    }
+   },
+   "catches": "Nameserver lock in; domain locked by default; account credits cannot pay for domains.",
+   "sources": [
+    "https://developers.cloudflare.com/registrar/faq/"
+   ],
+   "website": "https://www.cloudflare.com/products/registrar/"
+  },
+  {
+   "id": "spaceship",
+   "name": "Spaceship",
+   "providerId": "spaceship",
+   "budget": "great",
+   "verdict": "Would be the cheapest 10 year total if the unverified prices hold.",
+   "verification": "snippet",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "proxy via Withheld for Privacy (unverified, site blocks bots)",
+     "source": "https://www.spaceship.com/domains/domain-name-privacy/"
+    },
+    "ssl": {
+     "value": "unknown",
+     "note": "free URL redirects with SSL claimed"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "500 mails/hour; ads may be shown with free services (unverified)"
+    },
+    "mailbox": {
+     "value": "paid",
+     "note": "Spacemail, 30 day trial (unverified)"
+    },
+    "dns": {
+     "value": "free",
+     "note": "external nameservers allowed (official API spec)",
+     "source": "https://docs.spaceship.dev/"
+    },
+    "dnssec": {
+     "value": "free",
+     "note": "on by default (unverified)"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "note": "with SSL (unverified)"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP, U2F keys, passkeys (unverified)"
+    }
+   },
+   "catches": "ICANN fee added at checkout; nearly everything needs a manual browser check.",
+   "sources": [
+    "https://www.spaceship.com/domains/gtld/com/",
+    "https://docs.spaceship.dev/"
+   ],
+   "website": "https://www.spaceship.com"
+  },
+  {
+   "id": "sav",
+   "name": "Sav.com",
+   "providerId": null,
+   "budget": "good",
+   "verdict": "Great price band, but renewal is above year one and free services carry an ads clause.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "proxy style, on every .com",
+     "source": "https://www.sav.com/domains/com"
+    },
+    "ssl": {
+     "value": "free",
+     "note": "Cloudflare SSL when using Sav DNS",
+     "source": "https://sav.com/domains/dns"
+    },
+    "emailForwarding": {
+     "value": "unknown",
+     "note": "reportedly via a free third party ImprovMX account"
+    },
+    "mailbox": {
+     "value": "unknown"
+    },
+    "dns": {
+     "value": "free",
+     "note": "Cloudflare backed",
+     "source": "https://sav.com/domains/dns"
+    },
+    "dnssec": {
+     "value": "free",
+     "note": "on Sav DNS",
+     "source": "https://sav.com/domains/dns"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "source": "https://sav.com/domains/dns"
+    },
+    "twoFactor": {
+     "value": "unknown",
+     "note": "exists, methods unverified"
+    }
+   },
+   "catches": "Ads may be shown with free services; $80 redemption; \"same price at renewal\" contradicts their own prices.",
+   "sources": [
+    "https://www.sav.com/domains/com",
+    "https://sav.com/legal/domain-name-registration"
+   ],
+   "website": "https://www.sav.com"
+  },
+  {
+   "id": "namesilo",
+   "name": "NameSilo",
+   "providerId": "namesilo",
+   "budget": "unknown",
+   "verdict": "Cannot be rated until the live .com price is confirmed ($11 would be great, $19.99 average).",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "real proxy via PrivacyGuardian.org; not for .us .in",
+     "source": "https://www.namesilo.com/support/v2/articles/domain-manager/whois-privacy"
+    },
+    "ssl": {
+     "value": "unknown"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "100 forwards, needs NameSilo MX",
+     "source": "https://www.namesilo.com/support/v2/articles/email/email-forwarding"
+    },
+    "mailbox": {
+     "value": "unknown"
+    },
+    "dns": {
+     "value": "free",
+     "note": "(unverified)"
+    },
+    "dnssec": {
+     "value": "limited",
+     "note": "only with third party DNS (unverified)"
+    },
+    "urlForwarding": {
+     "value": "unknown"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP (unverified)"
+    }
+   },
+   "catches": "Cart may show a \"processing fee\" line (unverified).",
+   "sources": [
+    "https://www.namesilo.com/tld/com"
+   ],
+   "website": "https://www.namesilo.com"
+  },
+  {
+   "id": "gname",
+   "name": "Gname",
+   "providerId": "gname",
+   "budget": "good",
+   "verdict": "Flat, fair price with free privacy, but almost no extras.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "\"hidden or replaced with proxy information\"",
+     "source": "https://www.gname.com/whois"
+    },
+    "ssl": {
+     "value": "none"
+    },
+    "emailForwarding": {
+     "value": "none"
+    },
+    "mailbox": {
+     "value": "none"
+    },
+    "dns": {
+     "value": "free",
+     "source": "https://www.gname.com/us/help/dnssec-setting.html"
+    },
+    "dnssec": {
+     "value": "limited",
+     "note": "only on Gname DNS",
+     "source": "https://www.gname.com/us/help/dnssec-setting.html"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "note": "URL and masked URL records"
+    },
+    "twoFactor": {
+     "value": "limited",
+     "note": "email, SMS or 2FA, type unclear"
+    }
+   },
+   "catches": "$200 redemption fee.",
+   "sources": [
+    "https://www.gname.com/price",
+    "https://www.gname.com/pay-options"
+   ],
+   "website": "https://www.gname.com"
+  },
+  {
+   "id": "epik",
+   "name": "Epik",
+   "providerId": null,
+   "budget": "good",
+   "verdict": "Honest flat pricing and real privacy, about $5/yr dearer than the top tier.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "real proxy via Anonymize, free for life",
+     "source": "https://www.epik.com/domain-privacy/"
+    },
+    "ssl": {
+     "value": "free",
+     "note": "Let's Encrypt (hosting requirement unverified)"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "on Epik nameservers, limits not stated"
+    },
+    "mailbox": {
+     "value": "none"
+    },
+    "dns": {
+     "value": "free",
+     "note": "on Epik nameservers"
+    },
+    "dnssec": {
+     "value": "free",
+     "note": "toggle on Epik DNS"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "note": "needs Epik nameservers"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP plus support PIN"
+    }
+   },
+   "catches": "Expired names go to liquidation venues 33 days after expiry; upsells.",
+   "sources": [
+    "https://www.epik.com/domains/prices/",
+    "https://www.epik.com/support/expired-registration-recovery-policy/"
+   ],
+   "website": "https://www.epik.com"
+  },
+  {
+   "id": "internetbs",
+   "name": "Internet.bs",
+   "providerId": "internetbs",
+   "budget": "good",
+   "verdict": "Free privacy and forwarding at a mid price; prices need a manual check.",
+   "verification": "snippet",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "lifetime (homepage, unverified)",
+     "source": "https://internetbs.net/"
+    },
+    "ssl": {
+     "value": "unknown"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "(unverified)"
+    },
+    "mailbox": {
+     "value": "unknown"
+    },
+    "dns": {
+     "value": "free"
+    },
+    "dnssec": {
+     "value": "free",
+     "note": "for .com per API docs"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "note": "(unverified)"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP and hardware keys",
+     "source": "https://faq.internetbs.net/hc/en-gb/articles/21798712088477-How-can-I-enable-two-factor-authentication"
+    }
+   },
+   "catches": "Prices depend on volume tier; restore about $107.",
+   "sources": [
+    "https://internetbs.net/en/price.html"
+   ],
+   "website": "https://internetbs.net"
+  },
+  {
+   "id": "vercel",
+   "name": "Vercel",
+   "providerId": "vercel",
+   "budget": "good",
+   "verdict": "Cheap and flat, but no email forwarding and no DNSSEC.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "on by default; proxy vs redaction not stated",
+     "source": "https://vercel.com/docs/domains/working-with-domains"
+    },
+    "ssl": {
+     "value": "free",
+     "note": "for domains used in Vercel projects",
+     "source": "https://vercel.com/docs/domains/working-with-domains"
+    },
+    "emailForwarding": {
+     "value": "none",
+     "note": "\"Vercel does not provide a mail service\"",
+     "source": "https://vercel.com/docs/domains/troubleshooting"
+    },
+    "mailbox": {
+     "value": "none"
+    },
+    "dns": {
+     "value": "free",
+     "note": "custom nameservers allowed",
+     "source": "https://vercel.com/docs/domains/managing-nameservers"
+    },
+    "dnssec": {
+     "value": "none",
+     "note": "not supported (staff forum reply)"
+    },
+    "urlForwarding": {
+     "value": "limited",
+     "note": "project level redirects only"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP, passkeys, security keys",
+     "source": "https://vercel.com/docs/two-factor-authentication"
+    }
+   },
+   "catches": "Auto renew charged 30 days early and cannot be cancelled once processing starts; card only.",
+   "sources": [
+    "https://vercel.com/docs/domains/supported-domains"
+   ],
+   "website": "https://vercel.com/domains"
+  },
+  {
+   "id": "route53",
+   "name": "AWS Route 53",
+   "providerId": "route53",
+   "budget": "average",
+   "verdict": "Honest flat price with free privacy, but nothing else is free and DNS hosting costs about $6/yr.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "on by default",
+     "source": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-privacy-protection.html"
+    },
+    "ssl": {
+     "value": "limited",
+     "note": "ACM certificates only on AWS services"
+    },
+    "emailForwarding": {
+     "value": "none"
+    },
+    "mailbox": {
+     "value": "none"
+    },
+    "dns": {
+     "value": "paid",
+     "note": "hosted zone $0.50/month plus queries, created automatically",
+     "source": "https://aws.amazon.com/route53/pricing/"
+    },
+    "dnssec": {
+     "value": "paid",
+     "note": "KMS key charges apply"
+    },
+    "urlForwarding": {
+     "value": "none"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "passkeys, security keys, TOTP",
+     "source": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa.html"
+    }
+   },
+   "catches": "The automatic hosted zone fee; domains suspended if the AWS account closes; AWS credits cannot pay for domains.",
+   "sources": [
+    "https://aws.amazon.com/route53/pricing/"
+   ],
+   "website": "https://aws.amazon.com/route53/"
+  },
+  {
+   "id": "nfs",
+   "name": "NearlyFreeSpeech",
+   "providerId": "nfs",
+   "budget": "average",
+   "verdict": "Transparent, but every extra is metered, so the 10 year total lands near $194.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "paid",
+     "note": "about $3.29/yr, real proxy",
+     "source": "https://www.nearlyfreespeech.net/services/respect"
+    },
+    "ssl": {
+     "value": "limited",
+     "note": "only on their paid hosting"
+    },
+    "emailForwarding": {
+     "value": "paid",
+     "note": "about $10.95/yr",
+     "source": "https://www.nearlyfreespeech.net/services/email"
+    },
+    "mailbox": {
+     "value": "none"
+    },
+    "dns": {
+     "value": "paid",
+     "note": "about $0.41 to $1.22/yr",
+     "source": "https://www.nearlyfreespeech.net/services/dns"
+    },
+    "dnssec": {
+     "value": "none"
+    },
+    "urlForwarding": {
+     "value": "none"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP",
+     "source": "https://faq.nearlyfreespeech.net/q/2FASetup"
+    }
+   },
+   "catches": "Prepaid balance with deposit fee; manual renew by default.",
+   "sources": [
+    "https://www.nearlyfreespeech.net/services/domains"
+   ],
+   "website": "https://www.nearlyfreespeech.net",
+   "privacyCost": {
+    "amount": 3.29,
+    "currency": "USD"
+   }
+  },
+  {
+   "id": "namecheap",
+   "name": "Namecheap",
+   "providerId": "namecheap",
+   "budget": "average",
+   "verdict": "Good extras, but the November 2026 price rise puts 10 years near $198.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "proxy via Withheld for Privacy, for life",
+     "source": "https://www.namecheap.com/security/domain-privacy-service/"
+    },
+    "ssl": {
+     "value": "unknown",
+     "note": "site blocks automated checks"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "up to 100 forwards",
+     "source": "https://www.namecheap.com/support/knowledgebase/article.aspx/308/2214/how-to-set-up-free-email-forwarding/"
+    },
+    "mailbox": {
+     "value": "paid",
+     "note": "Private Email"
+    },
+    "dns": {
+     "value": "free",
+     "note": "BasicDNS / FreeDNS"
+    },
+    "dnssec": {
+     "value": "free",
+     "note": "automatic on Namecheap DNS",
+     "source": "https://www.namecheap.com/support/knowledgebase/article.aspx/9723/2232/managing-dnssec-for-domains-pointed-to-premium-or-basicdns/"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "note": "301, 302, masked"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP or U2F/WebAuthn",
+     "source": "https://www.namecheap.com/security/2fa-two-factor-authentication/"
+    }
+   },
+   "catches": "Renewal 25% above registration; ICANN fee appears late in checkout.",
+   "sources": [
+    "https://www.namecheap.com/support/knowledgebase/article.aspx/10840/2201/com-price-change-november-1-2026/"
+   ],
+   "website": "https://www.namecheap.com"
+  },
+  {
+   "id": "namecom",
+   "name": "Name.com",
+   "providerId": "namecom",
+   "budget": "average",
+   "verdict": "Decent freebies at a renewal around $20.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "\"Domain Safe\" on eligible domains; Pro is a paid upsell",
+     "source": "https://www.name.com/blog/domain-safe-v-domain-safe-pro"
+    },
+    "ssl": {
+     "value": "none"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "needs name.com nameservers",
+     "source": "https://www.name.com/support/articles/205935517-adding-email-forwarding-to-a-non-name-com-email-account"
+    },
+    "mailbox": {
+     "value": "none"
+    },
+    "dns": {
+     "value": "free"
+    },
+    "dnssec": {
+     "value": "unknown"
+    },
+    "urlForwarding": {
+     "value": "free"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP",
+     "source": "https://www.name.com/two-step-verification"
+    }
+   },
+   "catches": "Domain Safe Pro upsell.",
+   "sources": [
+    "https://www.name.com/pricing"
+   ],
+   "website": "https://www.name.com"
+  },
+  {
+   "id": "hostinger",
+   "name": "Hostinger",
+   "providerId": "hostinger",
+   "budget": "average",
+   "verdict": "The honest price is about $20/yr; the $0.01 headline needs a 3 year term.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "on supported TLDs (not .ai)",
+     "source": "https://www.hostinger.com/support/1583419-whois-privacy-protection-at-hostinger/"
+    },
+    "ssl": {
+     "value": "limited",
+     "note": "free with hosting"
+    },
+    "emailForwarding": {
+     "value": "unknown"
+    },
+    "mailbox": {
+     "value": "paid"
+    },
+    "dns": {
+     "value": "free"
+    },
+    "dnssec": {
+     "value": "free"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "note": "redirects work without hosting"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "authenticator app or email",
+     "source": "https://support.hostinger.com/en/articles/4888148-how-to-set-up-two-factor-authentication-on-your-hostinger-account"
+    }
+   },
+   "catches": "Misleading $0.01 headline; hosting upsells.",
+   "sources": [
+    "https://www.hostinger.com/domain-name-search"
+   ],
+   "website": "https://www.hostinger.com"
+  },
+  {
+   "id": "squarespace",
+   "name": "Squarespace Domains",
+   "providerId": null,
+   "budget": "average",
+   "verdict": "Clean and complete, but priced at the retail $20 level.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "source": "https://support.squarespace.com/hc/en-us/articles/205812208-Squarespace-domains-FAQ"
+    },
+    "ssl": {
+     "value": "free",
+     "note": "Let's Encrypt; renewal tied to Squarespace hosting"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "up to 100 aliases"
+    },
+    "mailbox": {
+     "value": "paid",
+     "note": "Google Workspace"
+    },
+    "dns": {
+     "value": "free"
+    },
+    "dnssec": {
+     "value": "free",
+     "note": "automatic on Squarespace nameservers",
+     "source": "https://support.squarespace.com/hc/en-us/articles/31094668921229-DNSSEC-for-Squarespace-domains"
+    },
+    "urlForwarding": {
+     "value": "unknown"
+    },
+    "twoFactor": {
+     "value": "free"
+    }
+   },
+   "catches": "Refunds only within 5 days; auto renew on.",
+   "sources": [
+    "https://domains.squarespace.com/"
+   ],
+   "website": "https://domains.squarespace.com"
+  },
+  {
+   "id": "hover",
+   "name": "Hover",
+   "providerId": null,
+   "budget": "average",
+   "verdict": "Retail price, and email forwarding is no longer cheap.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "on by default",
+     "source": "https://www.hover.com/whois"
+    },
+    "ssl": {
+     "value": "unknown"
+    },
+    "emailForwarding": {
+     "value": "paid",
+     "note": "moving into Titan Pro at $36/yr",
+     "source": "https://support.hover.com/support/solutions/articles/201000132630-titan-email-faq"
+    },
+    "mailbox": {
+     "value": "paid",
+     "note": "Titan from $36/yr"
+    },
+    "dns": {
+     "value": "free"
+    },
+    "dnssec": {
+     "value": "limited",
+     "note": "only when not on Hover nameservers",
+     "source": "https://help.hover.com/hc/en-us/articles/217281647-DNSSEC-services"
+    },
+    "urlForwarding": {
+     "value": "limited",
+     "note": "needs Hover nameservers"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP"
+    }
+   },
+   "catches": "$175 redemption fee.",
+   "sources": [
+    "https://www.hover.com/tld/buy-com-domain"
+   ],
+   "website": "https://www.hover.com"
+  },
+  {
+   "id": "godaddy",
+   "name": "GoDaddy",
+   "providerId": "godaddy",
+   "budget": "poor",
+   "verdict": "About $214 over 10 years with fewer free extras than cheaper rivals.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "proxy via Domains By Proxy; \"Full Domain Protection\" is a paid upsell",
+     "source": "https://www.godaddy.com/help/what-is-domain-privacy-41145"
+    },
+    "ssl": {
+     "value": "unknown"
+    },
+    "emailForwarding": {
+     "value": "none",
+     "note": "no longer included with domains",
+     "source": "https://www.godaddy.com/help/create-edit-or-delete-forwards-with-email-forwarding-42254"
+    },
+    "mailbox": {
+     "value": "paid"
+    },
+    "dns": {
+     "value": "free"
+    },
+    "dnssec": {
+     "value": "limited",
+     "note": "5 free credits, more needs Premium DNS",
+     "source": "https://www.godaddy.com/help/turn-dnssec-on-or-off-6420"
+    },
+    "urlForwarding": {
+     "value": "free"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "2 step verification"
+    }
+   },
+   "catches": "Classic teaser: renewal is 4.6x the promo; upsells.",
+   "sources": [
+    "https://www.godaddy.com/resources/skills/how-much-domain-name-cost"
+   ],
+   "website": "https://www.godaddy.com"
+  },
+  {
+   "id": "ovh",
+   "name": "OVHcloud",
+   "providerId": "ovh",
+   "budget": "good",
+   "verdict": "About EUR 137 net over 10 years with free privacy and forwarding.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "automatic",
+     "source": "https://www.ovhcloud.com/en-ie/domains/"
+    },
+    "ssl": {
+     "value": "unknown"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "\"Redirect\" without an email plan",
+     "source": "https://docs.ovhcloud.com/en/guides/web-cloud/email-and-collaborative-solutions/common-email-features/feature-redirections"
+    },
+    "mailbox": {
+     "value": "unknown",
+     "note": "a free address is advertised"
+    },
+    "dns": {
+     "value": "free",
+     "note": "standard DNS; Anycast is paid",
+     "source": "https://docs.ovhcloud.com/en/guides/web-cloud/domains/faq-domain-dns"
+    },
+    "dnssec": {
+     "value": "free"
+    },
+    "urlForwarding": {
+     "value": "unknown",
+     "note": "Easy Redirect, price not stated"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP, U2F, SMS",
+     "source": "https://docs.ovhcloud.com/en/guides/account-and-service-management/account-information/secure-ovhcloud-account-with-2fa"
+    }
+   },
+   "catches": "First year promos then a higher renewal.",
+   "sources": [
+    "https://www.ovhcloud.com/en-ie/domains/"
+   ],
+   "website": "https://www.ovhcloud.com"
+  },
+  {
+   "id": "infomaniak",
+   "name": "Infomaniak",
+   "providerId": null,
+   "budget": "good",
+   "verdict": "Very cheap renewal and a free mailbox, but privacy costs a little extra.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "paid",
+     "note": "CHF 2.40/yr, real proxy",
+     "source": "https://www.infomaniak.com/en/domains/domain-privacy"
+    },
+    "ssl": {
+     "value": "limited",
+     "note": "with hosting"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "unlimited aliases and redirects"
+    },
+    "mailbox": {
+     "value": "free",
+     "note": "1 address, 20 GB"
+    },
+    "dns": {
+     "value": "free"
+    },
+    "dnssec": {
+     "value": "free"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "note": "on Infomaniak DNS"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP, push, YubiKey",
+     "source": "https://www.infomaniak.com/en/support/faq/1940/enable-two-factor-authentication-2fa-for-infomaniak-account-logins"
+    }
+   },
+   "catches": "\"Renewal Warranty\" upsell.",
+   "sources": [
+    "https://www.infomaniak.com/en/domains/prices/com"
+   ],
+   "website": "https://www.infomaniak.com",
+   "privacyCost": {
+    "amount": 2.4,
+    "currency": "CHF"
+   }
+  },
+  {
+   "id": "netcup",
+   "name": "netcup",
+   "providerId": null,
+   "budget": "average",
+   "verdict": "Fair flat price, but a bare domain gets almost nothing free.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "unknown"
+    },
+    "ssl": {
+     "value": "limited",
+     "note": "with webhosting only"
+    },
+    "emailForwarding": {
+     "value": "limited",
+     "note": "with webhosting only"
+    },
+    "mailbox": {
+     "value": "none"
+    },
+    "dns": {
+     "value": "free"
+    },
+    "dnssec": {
+     "value": "free",
+     "note": "on netcup nameservers",
+     "source": "https://www.netcup.com/de/helpcenter/dokumentation/domain/dnssec"
+    },
+    "urlForwarding": {
+     "value": "limited",
+     "note": "with webhosting only"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "mandatory, TOTP or email",
+     "source": "https://www.netcup.com/de/helpcenter/dokumentation/general/mfa"
+    }
+   },
+   "catches": "Contract runs until cancelled with a 31 day deadline.",
+   "sources": [
+    "https://www.netcup.com/de/domain/zusaetzliche-domain-com"
+   ],
+   "website": "https://www.netcup.com"
+  },
+  {
+   "id": "inwx",
+   "name": "INWX",
+   "providerId": "inwx",
+   "budget": "average",
+   "verdict": "Best DNS feature set here, but privacy and forwarding cost extra.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "paid",
+     "note": "EUR 4.19/yr net (4.99 gross), real proxy",
+     "source": "https://www.inwx.de/de/offer/whoisprivacy"
+    },
+    "ssl": {
+     "value": "none",
+     "note": "web forwarding cannot do HTTPS"
+    },
+    "emailForwarding": {
+     "value": "paid",
+     "note": "needs Mail Easy, EUR 0.29/month"
+    },
+    "mailbox": {
+     "value": "none"
+    },
+    "dns": {
+     "value": "free",
+     "note": "Anycast, API, DynDNS",
+     "source": "https://www.inwx.de/de/hosting/anycast-dns"
+    },
+    "dnssec": {
+     "value": "free",
+     "note": "with CDS and DS for external DNS"
+    },
+    "urlForwarding": {
+     "value": "limited",
+     "note": "HTTP only"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP",
+     "source": "https://kb.inwx.com/de-de/5-kundendaten/70-was-ist-mobile-tan-und-wie-aktiviere-ich-es"
+    }
+   },
+   "catches": "Parking page on INWX nameservers by default; prepaid balance.",
+   "sources": [
+    "https://www.inwx.de/de/domain/pricelist"
+   ],
+   "website": "https://www.inwx.de",
+   "privacyCost": {
+    "amount": 4.19,
+    "currency": "EUR"
+   }
+  },
+  {
+   "id": "strato",
+   "name": "STRATO",
+   "providerId": null,
+   "budget": "average",
+   "verdict": "Includes a real mailbox, but renewal is 3x the promo and privacy is only redaction.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "limited",
+     "note": "GDPR redaction only",
+     "source": "https://www.strato.de/faq/domains/was-ist-die-whois-und-welche-daten-sind-dort-hinterlegt/"
+    },
+    "ssl": {
+     "value": "unknown",
+     "note": "official pages contradict each other"
+    },
+    "emailForwarding": {
+     "value": "free"
+    },
+    "mailbox": {
+     "value": "free",
+     "note": "1 address, 2 GB"
+    },
+    "dns": {
+     "value": "free"
+    },
+    "dnssec": {
+     "value": "paid",
+     "note": "Domain Guard EUR 1.25/month",
+     "source": "https://www.strato.de/domains/domainguard/"
+    },
+    "urlForwarding": {
+     "value": "free"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP"
+    }
+   },
+   "catches": "Contract continues until cancelled with 1 month notice.",
+   "sources": [
+    "https://www.strato.de/domains/com-domain/"
+   ],
+   "website": "https://www.strato.de"
+  },
+  {
+   "id": "ionos",
+   "name": "IONOS",
+   "providerId": null,
+   "budget": "poor",
+   "verdict": "No privacy option at all since Dec 2025, plus a huge teaser gap.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "none",
+     "note": "discontinued for all TLDs (NIS2); GDPR redaction for individuals only",
+     "source": "https://www.ionos.de/hilfe/domains/domain-recht-und-eigentuemerschaft/aenderungen-bei-der-domain-privatsphaere-whois-privacy-durch-nis2/"
+    },
+    "ssl": {
+     "value": "free",
+     "note": "one wildcard certificate"
+    },
+    "emailForwarding": {
+     "value": "unknown"
+    },
+    "mailbox": {
+     "value": "none"
+    },
+    "dns": {
+     "value": "free"
+    },
+    "dnssec": {
+     "value": "paid",
+     "note": "Domain Guard EUR 15/yr",
+     "source": "https://www.ionos.de/domains/domain-guard"
+    },
+    "urlForwarding": {
+     "value": "unknown"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP or IONOS app"
+    }
+   },
+   "catches": "Renewal is 25x the first year rate; monthly billing.",
+   "sources": [
+    "https://www.ionos.de/domains/domain-preistabelle"
+   ],
+   "website": "https://www.ionos.de"
+  },
+  {
+   "id": "uniteddomains",
+   "name": "united-domains",
+   "providerId": "uniteddomains",
+   "budget": "poor",
+   "verdict": "About EUR 334 net over 10 years with privacy.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "paid",
+     "note": "only in \"Domain Tresor\": EUR 15/yr gross, real proxy",
+     "source": "https://www.united-domains.de/domain-tresor/"
+    },
+    "ssl": {
+     "value": "limited",
+     "note": "with ud hosting"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "unlimited"
+    },
+    "mailbox": {
+     "value": "none"
+    },
+    "dns": {
+     "value": "free"
+    },
+    "dnssec": {
+     "value": "paid",
+     "note": "via Domain Tresor"
+    },
+    "urlForwarding": {
+     "value": "free"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP"
+    }
+   },
+   "catches": "Renewal 2.25x the promo; EUR 4 per payment reminder.",
+   "sources": [
+    "https://www.united-domains.de/com-domain/",
+    "https://www.united-domains.de/agb/"
+   ],
+   "website": "https://www.united-domains.de",
+   "privacyCost": {
+    "amount": 12.61,
+    "currency": "EUR"
+   }
+  },
+  {
+   "id": "gandi",
+   "name": "Gandi",
+   "providerId": "gandi",
+   "budget": "poor",
+   "verdict": "The most expensive .com renewal in this list.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "limited",
+     "note": "redaction plus anonymized relay email",
+     "source": "https://docs.gandi.net/en/domain_names/common_operations/whois_privacy.html"
+    },
+    "ssl": {
+     "value": "limited",
+     "note": "free for the first year only"
+    },
+    "emailForwarding": {
+     "value": "unknown",
+     "note": "advertised; free after year 1 unverified"
+    },
+    "mailbox": {
+     "value": "limited",
+     "note": "2 mailboxes, first year only"
+    },
+    "dns": {
+     "value": "free",
+     "note": "LiveDNS"
+    },
+    "dnssec": {
+     "value": "free"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "note": "HTTPS web forwarding"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP, security keys"
+    }
+   },
+   "catches": "Renewal is over 3x registration.",
+   "sources": [
+    "https://www.gandi.net/en-US/domain/tld/com"
+   ],
+   "website": "https://www.gandi.net"
+  },
+  {
+   "id": "eurodns",
+   "name": "EuroDNS",
+   "providerId": "eurodns",
+   "budget": "poor",
+   "verdict": "About EUR 259 net over 10 years once privacy is added.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "paid",
+     "note": "EUR 5/yr",
+     "source": "https://www.eurodns.com/domain-privacy"
+    },
+    "ssl": {
+     "value": "free",
+     "note": "listed as included on the .com page",
+     "source": "https://www.eurodns.com/domain-extensions/com-domain-registration"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "with free Anycast DNS (unverified)"
+    },
+    "mailbox": {
+     "value": "limited",
+     "note": "a branded address listed"
+    },
+    "dns": {
+     "value": "free",
+     "note": "Anycast"
+    },
+    "dnssec": {
+     "value": "free"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "note": "(unverified)"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP"
+    }
+   },
+   "catches": "Promo first year, then double.",
+   "sources": [
+    "https://www.eurodns.com/domain-extensions/com-domain-registration"
+   ],
+   "website": "https://www.eurodns.com",
+   "privacyCost": {
+    "amount": 5.0,
+    "currency": "EUR"
+   }
+  },
+  {
+   "id": "101domain",
+   "name": "101domain",
+   "providerId": "101domain",
+   "budget": "poor",
+   "verdict": "About $319 over 10 years with privacy; a corporate and ccTLD specialist.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "paid",
+     "note": "$10.99/yr",
+     "source": "https://www.101domain.com/whois_privacy_protection.htm"
+    },
+    "ssl": {
+     "value": "paid"
+    },
+    "emailForwarding": {
+     "value": "unknown"
+    },
+    "mailbox": {
+     "value": "none"
+    },
+    "dns": {
+     "value": "unknown"
+    },
+    "dnssec": {
+     "value": "unknown"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "note": "on default nameservers"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP"
+    }
+   },
+   "catches": null,
+   "sources": [
+    "https://www.101domain.com/com.htm"
+   ],
+   "website": "https://www.101domain.com",
+   "privacyCost": {
+    "amount": 10.99,
+    "currency": "USD"
+   }
+  },
+  {
+   "id": "openprovider",
+   "name": "Openprovider",
+   "providerId": "openprovider",
+   "budget": "poor",
+   "verdict": "A reseller platform; free privacy needs a paid membership.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "limited",
+     "note": "free only for paid members (from $49.99/yr per account)",
+     "source": "https://www.openprovider.com/explore/whois-privacy-protection"
+    },
+    "ssl": {
+     "value": "unknown"
+    },
+    "emailForwarding": {
+     "value": "unknown"
+    },
+    "mailbox": {
+     "value": "unknown"
+    },
+    "dns": {
+     "value": "unknown"
+    },
+    "dnssec": {
+     "value": "unknown"
+    },
+    "urlForwarding": {
+     "value": "unknown"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP"
+    }
+   },
+   "catches": "Membership needed for good prices and privacy.",
+   "sources": [
+    "https://www.openprovider.com/membership-plans"
+   ],
+   "website": "https://www.openprovider.com"
+  },
+  {
+   "id": "regery",
+   "name": "Regery",
+   "providerId": null,
+   "budget": "unknown",
+   "verdict": "Unrated: the site blocks automated checks.",
+   "verification": "snippet",
+   "features": {
+    "privacy": {
+     "value": "unknown",
+     "note": "on by default (unverified)"
+    },
+    "ssl": {
+     "value": "unknown",
+     "note": "a \"Free SSL Certificates\" page exists"
+    },
+    "emailForwarding": {
+     "value": "unknown",
+     "note": "50/hour (unverified)"
+    },
+    "mailbox": {
+     "value": "unknown"
+    },
+    "dns": {
+     "value": "unknown"
+    },
+    "dnssec": {
+     "value": "unknown"
+    },
+    "urlForwarding": {
+     "value": "unknown"
+    },
+    "twoFactor": {
+     "value": "unknown",
+     "note": "TOTP and passkeys (unverified)"
+    }
+   },
+   "catches": "Reinstatement $199 (unverified).",
+   "sources": [
+    "https://regery.com/domains/prices"
+   ],
+   "website": "https://regery.com"
+  },
+  {
+   "id": "namebright",
+   "name": "NameBright",
+   "providerId": "namebright",
+   "budget": "great",
+   "verdict": "Flat $11.76 with free privacy, forwarding and DNSSEC; about $118 over 10 years.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "free",
+     "note": "real proxy, \"free, indefinitely\" per FAQ; the Terms still mention $2.95/yr after year one",
+     "source": "https://help.namebright.com/faqs/whois-domain-privacy/"
+    },
+    "ssl": {
+     "value": "none",
+     "note": "not offered"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "no paid email plan needed",
+     "source": "https://help.namebright.com/faqs/email/"
+    },
+    "mailbox": {
+     "value": "paid"
+    },
+    "dns": {
+     "value": "free",
+     "note": "external nameservers allowed"
+    },
+    "dnssec": {
+     "value": "free",
+     "note": "own nameservers or DS for external DNS",
+     "source": "https://help.namebright.com/guides/dns-nameserver-management/enable-dnssec-for-a-domain/"
+    },
+    "urlForwarding": {
+     "value": "unknown",
+     "note": "masked, 301 and 302 exist, price not stated"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP, SMS, email",
+     "source": "https://help.namebright.com/guides/account-setup-access/enable-two-factor-authentication/"
+    }
+   },
+   "catches": "Cheapest rate needs a prepaid balance; auto renew 14 days early; $85 redemption; Terms and FAQ disagree on privacy.",
+   "sources": [
+    "https://www.namebright.com/Pricing",
+    "https://www.namebright.com/terms"
+   ],
+   "website": "https://www.namebright.com"
+  },
+  {
+   "id": "domainfactory",
+   "name": "DomainFactory",
+   "providerId": "domainfactory",
+   "budget": "poor",
+   "verdict": "Teaser year at 0,08 EUR/month, then about 24x more; about 216 EUR gross over 10 years.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "limited",
+     "note": "proxy discontinued after GDPR, redaction only",
+     "source": "https://www.df.eu/de/support/df-faq/domains/private-registrierung/"
+    },
+    "ssl": {
+     "value": "paid",
+     "note": "from 2,99 EUR"
+    },
+    "emailForwarding": {
+     "value": "unknown",
+     "note": "catchall needs a paid mailbox"
+    },
+    "mailbox": {
+     "value": "none",
+     "note": "paid extra"
+    },
+    "dns": {
+     "value": "free",
+     "note": "external nameservers allowed",
+     "source": "https://www.df.eu/de/support/df-faq/domains/nameserver/"
+    },
+    "dnssec": {
+     "value": "unknown"
+    },
+    "urlForwarding": {
+     "value": "unknown",
+     "note": "documented for plans with webspace"
+    },
+    "twoFactor": {
+     "value": "unknown"
+    }
+   },
+   "catches": "Renewal jumps about 24x; one year tie in then one month notice; cancel 4 weeks before term end; restore 99,99 EUR.",
+   "sources": [
+    "https://www.df.eu/de/preislisten/",
+    "https://www.df.eu/de/support/df-faq/rechnung-vertrag/kuendigung/"
+   ],
+   "website": "https://www.df.eu"
+  },
+  {
+   "id": "onecom",
+   "name": "one.com",
+   "providerId": "onecom",
+   "budget": "poor",
+   "verdict": "About $265 over 10 years: renewal more than doubles after year one.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "limited",
+     "note": "redaction only, no proxy (help center excerpt); paid Domain Protection add-on exists"
+    },
+    "ssl": {
+     "value": "none",
+     "note": "hosting only"
+    },
+    "emailForwarding": {
+     "value": "unknown",
+     "note": "plan table contradicts itself"
+    },
+    "mailbox": {
+     "value": "none",
+     "note": "email plans are paid"
+    },
+    "dns": {
+     "value": "free",
+     "note": "external nameservers allowed"
+    },
+    "dnssec": {
+     "value": "free",
+     "note": "on by default with one.com nameservers"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "note": "works without hosting"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP"
+    }
+   },
+   "catches": "Renewal more than doubles; auto renew on; Domain Protection upsell. A domain can be bought alone.",
+   "sources": [
+    "https://www.one.com/en-us/domain/com/"
+   ],
+   "website": "https://www.one.com"
+  },
+  {
+   "id": "allinkl",
+   "name": "ALL-INKL.COM",
+   "providerId": "allinkl",
+   "budget": "average",
+   "verdict": "Fair flat 14,90 EUR gross, but no WHOIS privacy at all.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "none",
+     "note": "data is public in WHOIS, no privacy product",
+     "source": "https://all-inkl.com/en/privacy-policy"
+    },
+    "ssl": {
+     "value": "none",
+     "note": "hosting only"
+    },
+    "emailForwarding": {
+     "value": "free",
+     "note": "in the domain plan",
+     "source": "https://all-inkl.com/domains/vorteile"
+    },
+    "mailbox": {
+     "value": "none"
+    },
+    "dns": {
+     "value": "free",
+     "note": "nameservers can be changed"
+    },
+    "dnssec": {
+     "value": "unknown",
+     "note": "not documented"
+    },
+    "urlForwarding": {
+     "value": "free"
+    },
+    "twoFactor": {
+     "value": "free",
+     "note": "TOTP",
+     "source": "https://all-inkl.com/en/support"
+    }
+   },
+   "catches": "Classic TLDs can be bought alone, new gTLDs only with hosting; cancel 7 days before the period ends or it renews; no refunds.",
+   "sources": [
+    "https://all-inkl.com/en/domains/prices",
+    "https://all-inkl.com/en/terms-and-conditions"
+   ],
+   "website": "https://all-inkl.com"
+  },
+  {
+   "id": "loopia",
+   "name": "Loopia",
+   "providerId": "loopia",
+   "budget": "poor",
+   "verdict": "About $270 over 10 years, $345 with privacy; DNS, forwarding and privacy are all paid.",
+   "verification": "verified",
+   "features": {
+    "privacy": {
+     "value": "paid",
+     "note": "80 SEK/yr excl. VAT for a real proxy; free redaction by default",
+     "source": "https://www.loopia.com/domainnames/domainprotection/"
+    },
+    "ssl": {
+     "value": "none",
+     "note": "hosting only"
+    },
+    "emailForwarding": {
+     "value": "paid",
+     "note": "needs LoopiaDNS (9,99 SEK/month) or a plan",
+     "source": "https://support.loopia.se/wiki/vidarebefordra-e-post-kundzon/"
+    },
+    "mailbox": {
+     "value": "paid",
+     "note": "79 SEK/month"
+    },
+    "dns": {
+     "value": "limited",
+     "note": "DNS editor needs paid LoopiaDNS",
+     "source": "https://www.loopia.com/loopiadns/"
+    },
+    "dnssec": {
+     "value": "limited",
+     "note": "automatic only for .se and .nu",
+     "source": "https://support.loopia.com/wiki/information-about-dnssec/"
+    },
+    "urlForwarding": {
+     "value": "paid",
+     "note": "part of LoopiaDNS"
+    },
+    "twoFactor": {
+     "value": "limited",
+     "note": "Swedish BankID only"
+    }
+   },
+   "catches": "Renewal 2.3x the first year; reactivation 999 SEK.",
+   "sources": [
+    "https://www.loopia.com/domainnames/detailed_prices/"
+   ],
+   "website": "https://www.loopia.com",
+   "privacyCost": {
+    "amount": 80,
+    "currency": "SEK"
+   }
+  },
+  {
+   "id": "namespro",
+   "name": "Namespro",
+   "providerId": "namespro",
+   "budget": "average",
+   "verdict": "Flat C$22.70 plus GST; privacy is a one time C$8.88 and a small mailbox is included.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "paid",
+     "note": "C$8.88 one time per registrant, real proxy",
+     "source": "https://www.namespro.ca/PrivateWHOIS.asp"
+    },
+    "ssl": {
+     "value": "none",
+     "note": "hosting only"
+    },
+    "emailForwarding": {
+     "value": "paid",
+     "note": "only in email plans from C$2.88/month",
+     "source": "https://www.namespro.ca/E-MailHosting.asp"
+    },
+    "mailbox": {
+     "value": "free",
+     "note": "one 100 MB mailbox per registration"
+    },
+    "dns": {
+     "value": "free",
+     "note": "external nameservers free",
+     "source": "https://www.namespro.ca/DNSHosting.asp"
+    },
+    "dnssec": {
+     "value": "limited",
+     "note": "DS records via support ticket"
+    },
+    "urlForwarding": {
+     "value": "free",
+     "note": "custom forwarder"
+    },
+    "twoFactor": {
+     "value": "unknown",
+     "note": "offered, method not stated"
+    }
+   },
+   "catches": "GST on top; no refunds; C$25 chargeback fee; privacy is final sale.",
+   "sources": [
+    "https://www.namespro.ca/pricing"
+   ],
+   "website": "https://www.namespro.ca",
+   "privacyCost": {
+    "amount": 8.88,
+    "currency": "CAD",
+    "oneTime": true
+   }
+  },
+  {
+   "id": "regru",
+   "name": "REG.RU",
+   "providerId": "regru",
+   "budget": "poor",
+   "verdict": "About 309 EUR over 10 years before privacy; most extras are paid.",
+   "verification": "partial",
+   "features": {
+    "privacy": {
+     "value": "paid",
+     "note": "proxy, about 199 RUB (bundle table excerpt)",
+     "source": "https://help.reg.ru/support/domains/administrator-domena/skrytiye-personalnykh-dannykh-administratora-domena"
+    },
+    "ssl": {
+     "value": "unknown"
+    },
+    "emailForwarding": {
+     "value": "paid",
+     "note": "with hosting or mail plans"
+    },
+    "mailbox": {
+     "value": "none"
+    },
+    "dns": {
+     "value": "free",
+     "note": "external nameservers allowed",
+     "source": "https://help.reg.ru/support/dns-servery-i-nastroyka-zony/dopolnitelnyye-vozmozhnosti/podderzhka-dns"
+    },
+    "dnssec": {
+     "value": "paid",
+     "note": "needs Premium DNS"
+    },
+    "urlForwarding": {
+     "value": "paid",
+     "note": "about 120 RUB/yr"
+    },
+    "twoFactor": {
+     "value": "limited",
+     "note": "SMS or voice call only",
+     "source": "https://help.reg.ru/support/lichnyy-kabinet/bezopasnost-akkaunta/dvukhfaktornaya-avtorizatsiya"
+    }
+   },
+   "catches": "Renewal about 54% above year one; privacy, DNSSEC and forwarding paid.",
+   "sources": [
+    "https://api.reg.ru/api/regru2/domain/get_prices"
+   ],
+   "website": "https://www.reg.com",
+   "privacyCost": {
+    "amount": 199,
+    "currency": "RUB"
+   }
+  }
+ ]
+}

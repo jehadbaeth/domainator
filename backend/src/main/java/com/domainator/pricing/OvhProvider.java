@@ -71,7 +71,12 @@ public class OvhProvider implements RegistrarProvider {
 
     @Override
     public String buyUrl(String domain) {
-        return "https://www.ovhcloud.com/en/domains/";
+        return null; // OVH's search runs in JavaScript; link the TLD page instead
+    }
+
+    @Override
+    public String tldUrl(String tld) {
+        return "https://www.ovhcloud.com/en/domains/tld/" + tld + "/";
     }
 
     @Override

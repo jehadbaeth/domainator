@@ -47,7 +47,7 @@ public class OpenproviderProvider implements RegistrarProvider {
 
     @Override
     public String buyUrl(String domain) {
-        return "https://rcp.openprovider.eu/";
+        return "https://www.openprovider.com/domains";
     }
 
     @Override

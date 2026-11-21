@@ -69,6 +69,11 @@ public class VercelProvider implements RegistrarProvider {
     }
 
     @Override
+    public String tldUrl(String tld) {
+        return "https://vercel.com/domains";
+    }
+
+    @Override
     public Map<String, TldPrice> fetchPrices() throws Exception {
         JsonNode supported = get(BASE + "supported");
         Set<String> available = new LinkedHashSet<>();

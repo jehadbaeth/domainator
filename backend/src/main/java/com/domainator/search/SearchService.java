@@ -24,6 +24,7 @@ import com.domainator.pricing.ProviderRegistry;
 import com.domainator.pricing.RegistrarProvider;
 import com.domainator.pricing.RegistrarProvider.DomainQuote;
 import com.domainator.pricing.TldPrice;
+import com.domainator.registrars.RegistrarProfiles;
 import com.domainator.search.SearchModels.DomainResult;
 import com.domainator.search.SearchModels.ProviderInfo;
 import com.domainator.search.SearchModels.Quote;
@@ -46,9 +47,12 @@ public class SearchService {
     private final DomainatorProperties props;
     private final LiveQuoteService live;
     private final ProviderRegistry registry;
+    private final RegistrarProfiles profiles;
 
     public SearchService(PriceCatalog catalog, AvailabilityService availability, SuggestionGenerator suggestions,
-                         ExchangeRates fx, DomainatorProperties props, LiveQuoteService live, ProviderRegistry registry) {
+                         ExchangeRates fx, DomainatorProperties props, LiveQuoteService live, ProviderRegistry registry,
+                         RegistrarProfiles profiles) {
+        this.profiles = profiles;
         this.catalog = catalog;
         this.availability = availability;
         this.suggestions = suggestions;
@@ -58,7 +62,8 @@ public class SearchService {
         this.registry = registry;
     }
 
-    public SearchResponse search(String query, Set<String> providerIds, String currency, List<Integer> years) {
+    public SearchResponse search(String query, Set<String> providerIds, String currency, List<Integer> years,
+                                 boolean withPrivacy) {
         List<ProviderState> states = selected(providerIds);
         Set<String> ids = states.stream().map(s -> s.provider().id()).collect(Collectors.toSet());
         Set<String> knownTlds = catalog.knownTlds(ids);
@@ -78,11 +83,11 @@ public class SearchService {
         List<DomainResult> results = new ArrayList<>();
         for (Candidate c : candidates) {
             int minYears = props.tldMinimumYears().getOrDefault(c.tld(), 1);
-            List<Quote> quotes = quotes(c.tld(), c.domain(), states, liveQuotes, cur, years, minYears);
+            List<Quote> quotes = quotes(c.tld(), c.domain(), states, liveQuotes, cur, years, minYears, withPrivacy);
             AvailabilityService.Result a = avail.get(c.domain());
             // A premium name is premium at every registrar, so standard price list quotes must not win "best".
             boolean premium = quotes.stream().anyMatch(Quote::premium);
-            List<Quote> eligible = premium ? quotes.stream().filter(Quote::live).toList() : quotes;
+            List<Quote> eligible = eligible(premium ? quotes.stream().filter(Quote::live).toList() : quotes, withPrivacy);
             results.add(new DomainResult(c.domain(), c.tld(), c.kind(), a.status(), a.source(), minYears,
                     premium, quotes, cheapest(eligible, years)));
         }
@@ -90,7 +95,8 @@ public class SearchService {
     }
 
     /** Every TLD the selected providers sell, cheapest first for the longest requested horizon. */
-    public TldResponse tlds(Set<String> providerIds, String currency, List<Integer> years, int limit) {
+    public TldResponse tlds(Set<String> providerIds, String currency, List<Integer> years, int limit,
+                            boolean withPrivacy) {
         List<ProviderState> states = selected(providerIds);
         Set<String> ids = states.stream().map(s -> s.provider().id()).collect(Collectors.toSet());
         String cur = currency(currency);
@@ -98,18 +104,18 @@ public class SearchService {
         List<TldRow> rows = new ArrayList<>();
         for (String tld : catalog.knownTlds(ids)) {
             int minYears = props.tldMinimumYears().getOrDefault(tld, 1);
-            List<Quote> quotes = quotes(tld, null, states, Map.of(), cur, years, minYears);
+            List<Quote> quotes = quotes(tld, null, states, Map.of(), cur, years, minYears, withPrivacy);
             if (!quotes.isEmpty()) {
-                rows.add(new TldRow(tld, minYears, quotes, cheapest(quotes, years)));
+                rows.add(new TldRow(tld, minYears, quotes, cheapest(eligible(quotes, withPrivacy), years)));
             }
         }
-        rows.sort(Comparator.comparing((TldRow r) -> bestTotal(r.quotes(), sortYears, cur)));
+        rows.sort(Comparator.comparing((TldRow r) -> bestTotal(eligible(r.quotes(), withPrivacy), sortYears, cur)));
         return new TldResponse(cur, years, providerInfo(states), rows.stream().limit(limit).toList());
     }
 
     private List<Quote> quotes(String tld, String domain, List<ProviderState> states,
                                Map<String, Map<String, DomainQuote>> liveQuotes, String cur,
-                               List<Integer> years, int minYears) {
+                               List<Integer> years, int minYears, boolean withPrivacy) {
         List<Quote> quotes = new ArrayList<>();
         for (ProviderState s : states) {
             RegistrarProvider provider = s.provider();
@@ -129,16 +135,48 @@ public class SearchService {
             // round the yearly prices first so the totals can be checked by hand from the displayed numbers
             BigDecimal r1 = (converted ? reg.get() : origReg).setScale(2, RoundingMode.HALF_UP);
             BigDecimal rn = (converted ? ren.get() : origRen).setScale(2, RoundingMode.HALF_UP);
+            String privacy = profiles.privacy(provider.id());
+            BigDecimal privacyAdded = null;
+            if (withPrivacy && "paid".equals(privacy)) {
+                String priceCur = converted ? cur : origCur;
+                var cost = profiles.privacyCost(provider.id());
+                privacyAdded = cost.flatMap(pc -> fx.convert(pc.amount(), pc.currency(), priceCur))
+                        .map(v -> v.setScale(2, RoundingMode.HALF_UP)).orElse(null);
+                if (privacyAdded != null) {
+                    r1 = r1.add(privacyAdded);
+                    if (!cost.get().oneTime()) {
+                        rn = rn.add(privacyAdded); // yearly fee
+                    }
+                }
+            }
             Map<Integer, BigDecimal> totals = new LinkedHashMap<>();
             for (int y : years) {
                 totals.put(y, CostCalculator.total(r1, rn, y, minYears));
             }
             quotes.add(new Quote(provider.id(), provider.displayName(), converted ? cur : origCur, r1, rn, totals,
-                    CostCalculator.isTeaser(origReg, origRen), dq != null && dq.premium(), dq != null, promo,
+                    CostCalculator.isTeaser(origReg, origRen), dq != null && dq.premium(), dq != null, privacy, privacyAdded, promo,
                     provider.taxNote(), origCur, origReg, origRen,
-                    domain == null ? null : provider.buyUrl(domain)));
+                    link(provider, domain, tld)));
         }
         return quotes;
+    }
+
+    /**
+     * With "include privacy" on, registrars whose privacy is missing, redaction only or a paid add-on we have no
+     * price for cannot win "best".
+     */
+    private static List<Quote> eligible(List<Quote> quotes, boolean withPrivacy) {
+        if (!withPrivacy) {
+            return quotes;
+        }
+        return quotes.stream().filter(q -> "free".equals(q.privacy()) || q.privacyAdded() != null
+                || "unknown".equals(q.privacy())).toList();
+    }
+
+    /** The registrar's search for the exact domain if it has one, otherwise its offer page for the TLD. */
+    private static String link(RegistrarProvider provider, String domain, String tld) {
+        String url = domain == null ? null : provider.buyUrl(domain);
+        return url != null ? url : provider.tldUrl(tld);
     }
 
     private static Map<Integer, String> cheapest(List<Quote> quotes, List<Integer> years) {

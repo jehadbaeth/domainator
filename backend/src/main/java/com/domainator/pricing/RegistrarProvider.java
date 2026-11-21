@@ -22,8 +22,21 @@ public interface RegistrarProvider {
     /** Shown next to prices so it is clear whether VAT is included. */
     String taxNote();
 
-    /** Link to the registrar's search page for a domain, so the user can go and buy it. */
+    /** Link to the registrar's search for this exact domain, or null if the site has no such URL. */
     String buyUrl(String domain);
+
+    /** Link to the registrar's offer / price page for a TLD; used when there is no per-domain link. */
+    default String tldUrl(String tld) {
+        return null;
+    }
+
+    /**
+     * A refresh that yields fewer TLDs than this is treated as broken (ERROR) rather than silently serving a
+     * half empty list. Used for providers that read web pages, which break when a site is redesigned.
+     */
+    default int minExpectedTlds() {
+        return 0;
+    }
 
     /**
      * Fetches the full price list, keyed by lower case ASCII (punycode) TLD without the leading dot.

@@ -1,5 +1,15 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
-import { api, type Availability, type DomainResult, type ProviderInfo, type Quote, type TldRow } from './api'
+import {
+  api,
+  type Availability,
+  type DomainResult,
+  type ProviderInfo,
+  type Quote,
+  type RegistrarData,
+  type RegistrarProfile,
+  type TldRow,
+} from './api'
+import { BudgetBadge, FeatureChip, RegistrarsTab } from './Registrars'
 
 const HORIZONS = [1, 3, 5, 10]
 const KIND_LABEL = { EXACT: 'exact', OTHER_TLD: 'other TLD', VARIATION: 'variation', DOMAIN_HACK: 'domain hack' }
@@ -10,7 +20,7 @@ const STATUS_LABEL: Record<Availability, string> = {
   UNKNOWN: 'unknown',
 }
 
-type Tab = 'search' | 'tlds'
+type Tab = 'search' | 'tlds' | 'registrars'
 type Sort = 'relevance' | 'price'
 
 function load<T>(key: string, fallback: T): T {
@@ -54,6 +64,9 @@ export default function App() {
   const [results, setResults] = useState<DomainResult[] | null>(null)
   const [tldRows, setTldRows] = useState<TldRow[] | null>(null)
   const [resultCurrency, setResultCurrency] = useState(currency)
+  const [withPrivacy, setWithPrivacy] = useState<boolean>(() => load('withPrivacy', true))
+  const [registrarData, setRegistrarData] = useState<RegistrarData | null>(null)
+  const [comRow, setComRow] = useState<TldRow | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -71,12 +84,19 @@ export default function App() {
         .catch(() => (timer = window.setTimeout(refresh, 3000)))
     refresh()
     api.currencies().then(setCurrencies).catch(() => undefined)
+    api.registrars().then(setRegistrarData).catch(() => undefined)
     return () => window.clearTimeout(timer)
   }, [])
 
   useEffect(() => save('selectedProviders', selected), [selected])
   useEffect(() => save('currency', currency), [currency])
   useEffect(() => save('horizon', horizon), [horizon])
+  useEffect(() => save('withPrivacy', withPrivacy), [withPrivacy])
+  const profiles = useMemo(() => {
+    const m = new Map<string, RegistrarProfile>()
+    registrarData?.registrars.forEach((r) => r.providerId && m.set(r.providerId, r))
+    return m
+  }, [registrarData])
 
   // empty selection means "all"
   const activeIds = selected.filter((id) => providers.some((p) => p.id === id))
@@ -90,7 +110,7 @@ export default function App() {
     setLoading(true)
     setError(null)
     try {
-      const res = await api.search(query, providerIds, currency, years)
+      const res = await api.search(query, providerIds, currency, years, withPrivacy)
       setResults(res.results)
       setResultCurrency(res.currency)
     } catch (err) {
@@ -104,8 +124,9 @@ export default function App() {
     setLoading(true)
     setError(null)
     try {
-      const res = await api.tlds(providerIds, currency, years, 300)
-      setTldRows(res.tlds)
+      const res = await api.tlds(providerIds, currency, years, 2000, withPrivacy)
+      setTldRows(res.tlds.slice(0, 300))
+      setComRow(res.tlds.find((r) => r.tld === 'com') ?? null)
       setResultCurrency(res.currency)
     } catch (err) {
       setError((err as Error).message)
@@ -117,9 +138,9 @@ export default function App() {
   // re-run the current view when settings change
   useEffect(() => {
     if (tab === 'search' && results) runSearch()
-    if (tab === 'tlds') loadTlds()
+    if (tab === 'tlds' || tab === 'registrars') loadTlds()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tab, currency, horizon, selected.join(','), providers.filter((p) => p.status === 'READY').length])
+  }, [tab, currency, horizon, withPrivacy, selected.join(','), providers.filter((p) => p.status === 'READY').length])
 
   function toggleProvider(id: string) {
     const current = activeIds.length ? activeIds : providers.map((p) => p.id)
@@ -155,6 +176,9 @@ export default function App() {
         <button className={tab === 'tlds' ? 'active' : ''} onClick={() => setTab('tlds')}>
           Cheapest TLDs
         </button>
+        <button className={tab === 'registrars' ? 'active' : ''} onClick={() => setTab('registrars')}>
+          Registrars &amp; free extras
+        </button>
       </nav>
 
       {tab === 'search' && (
@@ -183,6 +207,10 @@ export default function App() {
             ))}
           </div>
         </div>
+        <label className="control inline" title="Adds the yearly cost of paid WHOIS privacy to each registrar's price, and keeps registrars without real privacy out of 'best'">
+          <input type="checkbox" checked={withPrivacy} onChange={(e) => setWithPrivacy(e.target.checked)} />
+          Include WHOIS privacy cost
+        </label>
         <label className="control">
           <span className="label">Currency</span>
           <select value={currency} onChange={(e) => setCurrency(e.target.value)}>
@@ -257,6 +285,8 @@ export default function App() {
             cheapest: r.cheapest,
           }))}
           providers={shownProviders}
+          profiles={profiles}
+          withPrivacy={withPrivacy}
           horizon={horizon}
           currency={resultCurrency}
           empty={results.length ? 'Everything we checked is taken. Tick "Show taken" to see them.' : 'No candidates.'}
@@ -275,9 +305,22 @@ export default function App() {
             cheapest: r.cheapest,
           }))}
           providers={shownProviders}
+          profiles={profiles}
+          withPrivacy={withPrivacy}
           horizon={horizon}
           currency={resultCurrency}
           empty="No prices loaded yet."
+        />
+      )}
+
+      {tab === 'registrars' && (
+        <RegistrarsTab
+          data={registrarData}
+          providers={providers}
+          inactive={inactive}
+          comRow={comRow}
+          horizon={horizon}
+          currency={resultCurrency}
         />
       )}
 
@@ -315,11 +358,13 @@ interface Row {
 function PriceTable(props: {
   rows: Row[]
   providers: ProviderInfo[]
+  profiles: Map<string, RegistrarProfile>
+  withPrivacy: boolean
   horizon: number
   currency: string
   empty: string
 }) {
-  const { rows, providers, horizon, currency, empty } = props
+  const { rows, providers, profiles, withPrivacy, horizon, currency, empty } = props
   if (!rows.length) return <p className="notice">{empty}</p>
   return (
     <div className="table-wrap">
@@ -332,6 +377,14 @@ function PriceTable(props: {
               <th key={p.id}>
                 {p.name}
                 <small>{p.taxNote}</small>
+                {profiles.get(p.id) && (
+                  <div className="th-feats">
+                    <BudgetBadge budget={profiles.get(p.id)!.budget} />
+                    <FeatureChip feature={profiles.get(p.id)!.features.privacy} label="privacy" />
+                    <FeatureChip feature={profiles.get(p.id)!.features.ssl} label="SSL" />
+                    <FeatureChip feature={profiles.get(p.id)!.features.emailForwarding} label="email fwd" />
+                  </div>
+                )}
               </th>
             ))}
           </tr>
@@ -389,21 +442,23 @@ function PriceTable(props: {
                   const stale = r.premium && !q.live
                   return (
                     <td key={p.id} className={q.providerId === bestId ? 'cheapest' : stale ? 'stale' : ''}>
-                      <div className="total">
-                        {q.buyUrl && !taken ? (
-                          <a href={q.buyUrl} target="_blank" rel="noreferrer">
-                            {money(total, q.currency)}
-                          </a>
-                        ) : (
-                          money(total, q.currency)
-                        )}
-                      </div>
+                      <div className="total">{money(total, q.currency)}</div>
                       <div className="sub">
                         1st yr {money(q.registration, q.currency)}, then {money(q.renewal, q.currency)}/yr
                       </div>
                       {q.teaser && (
                         <span className="badge bait" title="Renewal costs at least 1.5x the first year">
                           teaser price
+                        </span>
+                      )}
+                      {withPrivacy && q.privacyAdded != null && (
+                        <span className="badge warn" title="Paid WHOIS privacy added to every year">
+                          incl. {money(q.privacyAdded, q.currency)} privacy
+                        </span>
+                      )}
+                      {withPrivacy && (q.privacy === 'none' || q.privacy === 'limited') && (
+                        <span className="badge warn" title="No real WHOIS privacy here, so it can't win 'best' with privacy on">
+                          {q.privacy === 'none' ? 'no privacy' : 'redaction only'}
                         </span>
                       )}
                       {q.premium && (
@@ -422,6 +477,12 @@ function PriceTable(props: {
                         </span>
                       )}
                       {q.currency !== currency && <span className="badge warn">no FX rate</span>}
+                      {q.buyUrl && !taken && (
+                        <a className="offer" href={q.buyUrl} target="_blank" rel="noreferrer"
+                           title={q.live || r.status ? `Open ${q.providerName} for this offer` : `Open ${q.providerName}'s price page`}>
+                          {r.status && q.buyUrl.includes(r.title) ? 'Buy' : 'Offer'} at {q.providerName} ↗
+                        </a>
+                      )}
                       {stale && (
                         <span className="badge warn" title="This is the standard TLD price; the name is premium, so the real price is higher">
                           standard price, won't apply

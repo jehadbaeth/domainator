@@ -11,6 +11,8 @@ export interface Quote {
   teaser: boolean
   premium: boolean
   live: boolean
+  privacy: FeatureValue
+  privacyAdded: number | null
   promo: string | null
   taxNote: string
   originalCurrency: string
@@ -66,6 +68,35 @@ export interface TldResponse {
   tlds: TldRow[]
 }
 
+export type FeatureValue = 'free' | 'paid' | 'limited' | 'none' | 'unknown'
+export type FeatureKey = 'privacy' | 'ssl' | 'emailForwarding' | 'mailbox' | 'dns' | 'dnssec' | 'urlForwarding' | 'twoFactor'
+
+export interface Feature {
+  value: FeatureValue
+  note?: string
+  source?: string
+}
+
+export interface RegistrarProfile {
+  id: string
+  name: string
+  providerId: string | null
+  budget: 'great' | 'good' | 'average' | 'poor' | 'unknown'
+  verdict: string
+  verification: 'verified' | 'partial' | 'snippet' | 'pending'
+  features: Record<FeatureKey, Feature>
+  catches: string | null
+  sources: string[]
+  website: string | null
+  privacyCost?: { amount: number; currency: string; oneTime?: boolean }
+}
+
+export interface RegistrarData {
+  asOf: string
+  note: string
+  registrars: RegistrarProfile[]
+}
+
 async function get<T>(url: string): Promise<T> {
   const res = await fetch(url)
   if (!res.ok) {
@@ -88,12 +119,13 @@ function params(p: Record<string, string>) {
 export const api = {
   providers: () => get<ProviderInfo[]>('/api/providers'),
   currencies: () => get<string[]>('/api/currencies'),
-  search: (q: string, providers: string[], currency: string, years: number[]) =>
+  registrars: () => get<RegistrarData>('/api/registrars'),
+  search: (q: string, providers: string[], currency: string, years: number[], withPrivacy: boolean) =>
     get<SearchResponse>(
-      `/api/search?${params({ q, providers: providers.join(','), currency, years: years.join(',') })}`,
+      `/api/search?${params({ q, providers: providers.join(','), currency, years: years.join(','), withPrivacy: String(withPrivacy) })}`,
     ),
-  tlds: (providers: string[], currency: string, years: number[], limit: number) =>
+  tlds: (providers: string[], currency: string, years: number[], limit: number, withPrivacy: boolean) =>
     get<TldResponse>(
-      `/api/tlds?${params({ providers: providers.join(','), currency, years: years.join(','), limit: String(limit) })}`,
+      `/api/tlds?${params({ providers: providers.join(','), currency, years: years.join(','), limit: String(limit), withPrivacy: String(withPrivacy) })}`,
     ),
 }

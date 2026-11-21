@@ -412,3 +412,85 @@ td.stale .sub {
   text-decoration: line-through;
   opacity: 0.6;
 }
+
+a.offer {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a.offer:hover {
+  text-decoration: underline;
+}
+
+.th-feats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 6px;
+  font-weight: 400;
+}
+
+.feat,
+.budget {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 1px 6px;
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+  background: var(--border);
+  color: var(--muted);
+}
+
+a.feat:hover {
+  text-decoration: underline;
+}
+
+.feat.free,
+.budget.great {
+  background: var(--good-soft);
+  color: var(--good);
+}
+
+.budget.good {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.feat.paid,
+.feat.limited,
+.budget.average {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.feat.none,
+.budget.poor {
+  background: var(--bad-soft);
+  color: var(--bad);
+}
+
+table.registrars td {
+  white-space: normal;
+}
+
+table.registrars td.domain {
+  min-width: 170px;
+}
+
+.wrap {
+  white-space: normal;
+  min-width: 180px;
+  max-width: 280px;
+}
+
+.src-on {
+  color: var(--good);
+}
+
+.src-off {
+  color: var(--warn);
+}
