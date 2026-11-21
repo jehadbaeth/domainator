@@ -1,0 +1,11 @@
+# secrets: API keys live here, never commit them
+.env
+.env.*
+!.env.example
+
+# build output
+backend/build/
+backend/.gradle/
+frontend/node_modules/
+frontend/dist/
+.DS_Store

@@ -1,0 +1,120 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: domainator
+  config:
+    # API keys come from a .env file (KEY=value lines). It is looked up in the project root and in backend/,
+    # both optional. Real environment variables with the same name win over the file.
+    import:
+      - optional:file:../.env[.properties]
+      - optional:file:./.env[.properties]
+  task:
+    scheduling:
+      pool:
+        size: 4   # price, FX and RDAP refreshes run in parallel
+
+domainator:
+  # Currency all prices are converted to (ECB daily rates). The UI can override it per search.
+  display-currency: EUR
+  price-refresh-interval: 12h
+
+  suggestions:
+    # The searched name is tried on all of these (first one counts as the "exact" match if no TLD was typed).
+    tlds: [com, net, org, io, dev, app, co, ai, xyz, me, de, eu, tech, online, site, cloud, info]
+    # Prefix/suffix variations are only tried on these TLDs (plus the TLD you typed), to keep lookups bounded.
+    modifier-tlds: [com, io]
+    prefixes: [get, try, use, my, go, the, hey, join]
+    suffixes: [app, hq, labs, hub, now, ly, online, team]
+    max-candidates: 50
+    domain-hacks: true
+
+  availability:
+    concurrency: 8
+    timeout: 6s
+    cache-ttl: 15m
+    # TLDs whose registry RDAP server is not listed in the IANA bootstrap file (checked 2026-11).
+    # Without an entry these fall back to DNS and show "likely available".
+    rdap-overrides:
+      io: https://rdap.identitydigital.services/rdap/
+      me: https://rdap.identitydigital.services/rdap/
+      co: https://rdap.registry.co/co/
+      de: https://rdap.denic.de/
+      ch: https://rdap.nic.ch/
+
+  # Registries that only sell multi-year blocks (registration AND renewal).
+  tld-minimum-years:
+    ai: 2
+
+  # Registrars. Public ones work out of the box. Keyed ones switch on automatically as soon as their
+  # variables are set in .env (see .env.example). Set enabled: false to switch any of them off.
+  providers:
+    # ---- public price lists, no account needed ----
+    porkbun:
+      enabled: true
+    ovh:
+      enabled: true
+      subsidiary: DE        # DE, FR, GB, IE, ES, IT, NL, PL ... decides currency and price list
+      include-vat: false    # OVH prices are net; true adds the subsidiary's VAT
+    inwx:
+      enabled: true
+      site: de              # de = EUR, com = USD, ch = CHF (separate price sheets, all net)
+    vercel:
+      enabled: true
+      token: ${VERCEL_TOKEN:}   # optional today
+      all-tlds: false           # true = full price list, ~10 min per refresh at 60 requests/min
+    regru:
+      enabled: false        # Russian registrar; paying from the EU may not be possible
+      currency: EUR
+
+    # ---- need an account + API credentials (from .env) ----
+    namecheap:
+      api-user: ${NAMECHEAP_API_USER:}
+      api-key: ${NAMECHEAP_API_KEY:}
+      username: ${NAMECHEAP_USERNAME:}        # defaults to api-user
+      client-ip: ${NAMECHEAP_CLIENT_IP:}      # your whitelisted public IPv4
+      sandbox: ${NAMECHEAP_SANDBOX:false}
+    namesilo:
+      api-key: ${NAMESILO_API_KEY:}
+    dynadot:
+      api-key: ${DYNADOT_API_KEY:}
+      currency: USD                           # usd, eur or cny
+    spaceship:
+      api-key: ${SPACESHIP_API_KEY:}
+      api-secret: ${SPACESHIP_API_SECRET:}
+    namecom:
+      username: ${NAMECOM_USERNAME:}
+      api-token: ${NAMECOM_API_TOKEN:}
+      sandbox: ${NAMECOM_SANDBOX:false}
+    internetbs:
+      api-key: ${INTERNETBS_API_KEY:}
+      password: ${INTERNETBS_PASSWORD:}
+      test: ${INTERNETBS_TEST:false}          # public test env, prices are not retail
+      currency: USD
+    route53:
+      # own names on purpose, so AWS credentials already in your shell are not picked up silently
+      access-key-id: ${ROUTE53_ACCESS_KEY_ID:}
+      secret-access-key: ${ROUTE53_SECRET_ACCESS_KEY:}
+    godaddy:
+      token: ${GODADDY_TOKEN:}
+    gandi:
+      token: ${GANDI_TOKEN:}
+    cloudflare:
+      api-token: ${CLOUDFLARE_API_TOKEN:}
+      account-id: ${CLOUDFLARE_ACCOUNT_ID:}
+    hostinger:
+      token: ${HOSTINGER_TOKEN:}
+    openprovider:
+      username: ${OPENPROVIDER_USERNAME:}
+      password: ${OPENPROVIDER_PASSWORD:}
+
+  # Registrars without any price API. Type the prices from their website and enable.
+  static-providers:
+    - id: example
+      name: Example Registrar
+      enabled: false
+      currency: USD
+      tax-note: "entered by hand, check before trusting"
+      prices:
+        com: { registration: 10.00, renewal: 10.00 }

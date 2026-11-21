@@ -1,0 +1,60 @@
+{
+ "answer": {
+  "currency": "EUR",
+  "last_update_time": "2026-11-20 21:07:16",
+  "price_group": "\u0420\u043e\u0437\u043d\u0438\u0446\u0430",
+  "prices": {
+   "ai": {
+    "extcreate_price_eq_renew": 1,
+    "idn": 0,
+    "reg_max_period": 10,
+    "reg_min_period": 2,
+    "reg_price": "260.00",
+    "renew_max_period": 9,
+    "renew_min_period": 2,
+    "renew_price": "284.00",
+    "retail_reg_price": "260.00",
+    "retail_renew_price": "284.00"
+   },
+   "com": {
+    "extcreate_price_eq_renew": 1,
+    "idn": 1,
+    "reg_max_period": 10,
+    "reg_min_period": 1,
+    "reg_price": "21.00",
+    "renew_max_period": 10,
+    "renew_min_period": 1,
+    "renew_price": "32.00",
+    "retail_reg_price": "21.00",
+    "retail_renew_price": "32.00"
+   },
+   "vg": {
+    "extcreate_price_eq_renew": 1,
+    "idn": 0,
+    "reg_max_period": 0,
+    "reg_min_period": 0,
+    "reg_price": "0.00",
+    "renew_max_period": 1,
+    "renew_min_period": 1,
+    "renew_price": "0.00",
+    "retail_reg_price": "0.00",
+    "retail_renew_price": "0.00"
+   },
+   "xyz": {
+    "extcreate_price_eq_renew": 1,
+    "idn": 1,
+    "reg_max_period": 10,
+    "reg_min_period": 1,
+    "reg_price": "3.00",
+    "renew_max_period": 10,
+    "renew_min_period": 1,
+    "renew_price": "41.00",
+    "retail_reg_price": "3.00",
+    "retail_renew_price": "41.00"
+   }
+  }
+ },
+ "charset": "utf-8",
+ "messagestore": null,
+ "result": "success"
+}

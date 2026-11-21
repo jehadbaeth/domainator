@@ -1,0 +1,68 @@
+{
+ "transactid": "6c51d657ab16799aa647e33d948fb4b2",
+ "status": "SUCCESS",
+ "product": [
+  {
+   "authinforequired": "YES",
+   "rgp": 720,
+   "minperiod": "1",
+   "maxperiod": 10,
+   "inc": 1,
+   "registration": "35.47",
+   "renewal": "38.80",
+   "transfer": "35.47",
+   "restore": "278.35",
+   "tld": "academy",
+   "currency": "USD"
+  },
+  {
+   "authinforequired": "YES",
+   "rgp": 672,
+   "minperiod": "2",
+   "maxperiod": 10,
+   "inc": 1,
+   "registration": "184.80",
+   "renewal": "201.60",
+   "restore": "350.00",
+   "tld": "ai",
+   "currency": "USD"
+  },
+  {
+   "authinforequired": "YES",
+   "rgp": 720,
+   "minperiod": "1",
+   "maxperiod": 10,
+   "inc": 1,
+   "registration": "11.30",
+   "renewal": "11.59",
+   "transfer": "11.30",
+   "restore": "106.51",
+   "tld": "com",
+   "currency": "USD"
+  },
+  {
+   "authinforequired": "YES",
+   "rgp": 720,
+   "minperiod": "1",
+   "maxperiod": 10,
+   "inc": 1,
+   "registration": "49.98",
+   "renewal": "51.24",
+   "transfer": "51.24",
+   "restore": "110.04",
+   "tld": "io",
+   "currency": "USD"
+  },
+  {
+   "authinforequired": "NO",
+   "rgp": 0,
+   "minperiod": "1",
+   "maxperiod": 10,
+   "inc": 1,
+   "registration": "6.71",
+   "renewal": "7.55",
+   "tld": "co.uk",
+   "currency": "USD"
+  }
+ ]
+}
